@@ -1,0 +1,7 @@
+- react components need to be "default"
+- relative is normal document flow, and can be resized. serves as an acting point for 'absolute' children
+- anchored to a position with respect to parent. removed from document flow.
+- z controls stacking order
+- mt controls the margin
+- next js keeps images in public folder
+- auto-row-[10rem] solved the spacing issue between grids

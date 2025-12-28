@@ -1,4 +1,5 @@
 'use client';
+import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler"
 import { RetroGrid } from "@/components/ui/retro-grid"
 import { Button } from "@/components/ui/button"
 import { SpinningText } from "@/components/ui/spinning-text"
@@ -115,6 +116,10 @@ export default function CardPage() {
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center p-4">
+       <div className="fixed top-4 right-4 z-50">
+  <AnimatedThemeToggler />
+    </div>
+
       {/* Background - hidden on mobile, visible on tablet+ */}
 
 
@@ -127,20 +132,29 @@ export default function CardPage() {
     {/* Card - responsive width with max constraint */}
     <Card className="mt-10 relative z-10 w-full max-w-md bg-transparent shadow-none border-none">
 
-<div className="relative w-full h-64 bg-[url('/imgs/face.svg')] bg-center bg-contain bg-no-repeat group"
+
+<div className="relative w-full h-64 bg-[url('/imgs/face.svg')] dark:invert bg-center bg-contain bg-no-repeat group"
                 onMouseEnter={handleMouseEnter}>
+
+{/* <img
+  src="/imgs/face.svg"
+  className="w-full h-64 object-contain dark:invert"
+/> */}
+
+
+
   
   {/* Default Name */}
-  <div className="font-serif mt-50 absolute inset-0 flex items-center justify-center text-black dark:text-white font-bold transition-opacity duration-300 group-hover:opacity-0">
+  <div className="dark:invert font-serif mt-50 absolute inset-0 flex items-center justify-center text-black dark:text-white font-bold transition-opacity duration-300 group-hover:opacity-0">
     John Acosta
   </div>
 
-    <div className="font-serif mt-60 absolute inset-0 flex items-center justify-center text-black dark:text-white transition-opacity duration-300 group-hover:opacity-0">
+    <div className=" dark:invert font-serif mt-60 absolute inset-0 flex items-center justify-center text-black dark:text-white transition-opacity duration-300 group-hover:opacity-0">
     Applied AI & Software Engineering
   </div>
 
   {/* Spinning Text on Hover */}
-  <div className=" font-serif absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-50 delay 5">
+  <div className=" dark:invert font-serif absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-50 delay 5">
     <SpinningText radius="10" className="text-black dark:text-white font-bold animate-spin-on-hover">
       {template} {adjectives[index]}
     </SpinningText>

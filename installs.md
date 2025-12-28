@@ -7,3 +7,7 @@ npx shadcn@latest add @magicui/bento-grid
 npm install @radix-ui/react-icons
 
 npx shadcn@latest add @magicui/spinning-text
+
+npx shadcn@latest add @magicui/terminal
+
+npx shadcn@latest add @magicui/smooth-cursor

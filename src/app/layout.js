@@ -1,7 +1,7 @@
 
 import "./globals.css";
 
-
+// import { SmoothCursor } from "@/components/ui/smooth-cursor"
 
 
 export const metadata = {
@@ -14,6 +14,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <div style={{ minWidth: 400, overflowX: "hidden" }}>
+          {/* <SmoothCursor /> */}
         {children}
         </div>
       </body>

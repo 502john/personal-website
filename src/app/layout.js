@@ -1,8 +1,6 @@
 
 import "./globals.css";
 
-// import { SmoothCursor } from "@/components/ui/smooth-cursor"
-
 
 export const metadata = {
   title: "John Acosta",

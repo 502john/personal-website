@@ -5,3 +5,4 @@
 - mt controls the margin
 - next js keeps images in public folder
 - auto-row-[10rem] solved the spacing issue between grids
+- tail wind css is mobile first, so you write the defaults as mobile and specify larger sizes

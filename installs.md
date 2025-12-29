@@ -11,3 +11,5 @@ npx shadcn@latest add @magicui/spinning-text
 npx shadcn@latest add @magicui/terminal
 
 npx shadcn@latest add @magicui/smooth-cursor
+
+https://github.com/vasturiano/react-force-graph?tab=readme-ov-file

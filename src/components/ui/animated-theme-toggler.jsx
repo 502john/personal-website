@@ -1,6 +1,13 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react"
 import { Moon, Sun } from "lucide-react"
+
+import {
+    EyeOpenIcon,
+    EyeNoneIcon,
+    EyeClosedIcon,
+} from "@radix-ui/react-icons";
+
 import { flushSync } from "react-dom"
 
 import { cn } from "@/lib/utils"
@@ -68,7 +75,7 @@ export const AnimatedThemeToggler = ({
       onClick={toggleTheme}
       className={cn(className)}
       {...props}>
-      {isDark ? <Sun /> : <Moon />}
+      {isDark ? <EyeNoneIcon /> : <EyeOpenIcon />}
       <span className="sr-only">Toggle theme</span>
     </button>
   );

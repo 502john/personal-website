@@ -73,8 +73,8 @@ export default function CardPage() {
             <CardTitle>About</CardTitle>
             <CardDescription className="space-y-1">
               <p>
-                Computer Science student currently researching predictive
-                systems.
+                Computer Science student currently researching medical
+                AI systems.
               </p>
             </CardDescription>
           </CardHeader>

@@ -58,7 +58,7 @@ export default function TetherPage() {
             <CardDescription className="space-y-2">
               <p>
                 <a
-                  href="/tether-design-document"
+                  href="/tether-design-document/tether-design-document.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-2 hover:underline"

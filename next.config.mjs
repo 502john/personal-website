@@ -1,6 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
-};
+  async redirects() {
+    return [
+      {
+        source: '/resume',
+        destination: '/resume.pdf',
+        permanent: false,
+      },
+      {
+        source: '/projects/tether/tether-design-document',
+        destination: '/tether-design-document.pdf',
+        permanent: false,
+      },
+    ]
+  },
+}
 
 export default nextConfig;

@@ -95,7 +95,7 @@ export default function CardPage() {
 
               <p>
                 <a
-                  href="/resume"
+                  href="/resume.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-2 hover:underline"

@@ -26,10 +26,12 @@ export default function CardPage() {
   const adjectives = ["scared • ", "hungry • ", "tired • ", "broke • "];
   const template = "do • it • ";
   const [index, setIndex] = useState(0);
+  const [hovered, setHovered] = useState(false);
 
   const handleMouseEnter = () => {
     // Move to the next adjective
     setIndex((prev) => (prev + 1) % adjectives.length);
+    setHovered(true);
   };
 
   return (
@@ -47,6 +49,7 @@ export default function CardPage() {
         <div
           className="relative w-full h-64 bg-[url('/imgs/face.svg')] dark:invert bg-center bg-contain bg-no-repeat group"
           onMouseEnter={handleMouseEnter}
+          onMouseLeave={() => setHovered(false)}
         >
           {/* Default Name */}
           <div className="dark:invert font-serif mt-50 absolute inset-0 flex items-center justify-center text-black dark:text-white font-bold transition-opacity duration-300 group-hover:opacity-0">
@@ -57,15 +60,17 @@ export default function CardPage() {
             Applied AI & Software Engineering
           </div>
 
-          {/* Spinning Text on Hover */}
-          <div className=" dark:invert font-serif absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-50 delay 5">
-            <SpinningText
-              radius="10"
-              className="text-black dark:text-white font-bold animate-spin-on-hover"
-            >
-              {template} {adjectives[index]}
-            </SpinningText>
-          </div>
+          {/* Spinning Text on Hover - only mounted while hovered so it isn't animating offscreen */}
+          {hovered && (
+            <div className=" dark:invert font-serif absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-50 delay 5">
+              <SpinningText
+                radius="10"
+                className="text-black dark:text-white font-bold animate-spin-on-hover"
+              >
+                {template} {adjectives[index]}
+              </SpinningText>
+            </div>
+          )}
         </div>
 
         <Card className="mx-5 relative max-w-md shadow-none border-dotted">

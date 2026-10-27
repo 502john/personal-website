@@ -47,30 +47,29 @@ export default function CardPage() {
       {/* Card - responsive width with max constraint */}
       <Card className="mt-10 relative z-10 w-full max-w-md bg-transparent shadow-none border-none">
         <div
-          className="relative w-full h-64 bg-[url('/imgs/face.svg')] dark:invert bg-center bg-contain bg-no-repeat group"
+          className="group"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={() => setHovered(false)}
         >
-          {/* Default Name */}
-          <div className="dark:invert font-serif mt-50 absolute inset-0 flex items-center justify-center text-black dark:text-white font-bold transition-opacity duration-300 group-hover:opacity-0">
-            John Acosta
+          <div className="relative w-full h-64 bg-[url('/imgs/face.svg')] dark:invert bg-center bg-contain bg-no-repeat">
+            {/* Spinning text, mounted only while hovered */}
+            {hovered && (
+              <div className=" dark:invert font-serif absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-50 delay 5">
+                <SpinningText
+                  radius="10"
+                  className="text-black dark:text-white font-bold animate-spin-on-hover"
+                >
+                  {template} {adjectives[index]}
+                </SpinningText>
+              </div>
+            )}
           </div>
 
-          <div className=" dark:invert font-serif mt-60 absolute inset-0 flex items-center justify-center text-black dark:text-white transition-opacity duration-300 group-hover:opacity-0">
-            Applied AI & Software Engineering
+          {/* Name and title */}
+          <div className="-mt-9.5 font-serif text-center leading-5 text-black dark:text-white transition-opacity duration-300 group-hover:opacity-0">
+            <div className="font-bold">John Acosta</div>
+            <div>Applied AI & Software Engineering</div>
           </div>
-
-          {/* Spinning Text on Hover - only mounted while hovered so it isn't animating offscreen */}
-          {hovered && (
-            <div className=" dark:invert font-serif absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-50 delay 5">
-              <SpinningText
-                radius="10"
-                className="text-black dark:text-white font-bold animate-spin-on-hover"
-              >
-                {template} {adjectives[index]}
-              </SpinningText>
-            </div>
-          )}
         </div>
 
         <Card className="mx-5 relative max-w-md shadow-none border-dotted">
@@ -146,7 +145,7 @@ export default function CardPage() {
                   href="mailto:johnacosta502@gmail.com"
                   className="hover:underline"
                 >
-                  johnacosta502@gmail.com
+                  johnacosta502<wbr />@gmail.com
                 </a>
               </p>
             </CardDescription>

@@ -2,9 +2,9 @@
 
 import { IconCloud } from "@/components/ui/icon-cloud"
 import { MorphingText } from "@/components/ui/morphing-text"
-import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler"
 // import { RetroGrid } from "@/components/ui/retro-grid"
 import { FileTextIcon } from "@radix-ui/react-icons"
+import Link from "next/link"
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
 const slugs = [
@@ -26,10 +26,6 @@ export default function TetherPage() {
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center p-4">
-
-      <div className="fixed top-4 right-4 z-50">
-        <AnimatedThemeToggler />
-      </div>
 
       {/* <RetroGrid className="absolute inset-0 hidden [@media(min-width:600px)]:block" /> */}
 
@@ -68,9 +64,9 @@ export default function TetherPage() {
                 </a>
               </p>
               <p>
-                <a href="/" className="inline-flex items-center gap-2 hover:underline text-xs text-muted-foreground">
+                <Link href="/" className="inline-flex items-center gap-2 hover:underline text-xs text-muted-foreground">
                   ← back
-                </a>
+                </Link>
               </p>
             </CardDescription>
           </CardHeader>

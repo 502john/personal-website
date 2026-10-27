@@ -1,0 +1,57 @@
+// Site-wide text for the portfolio. /card has its own.
+
+export const site = {
+  name: "John Acosta",
+  tagline: "Applied AI & Software Engineering",
+  // Shown in search results and link previews.
+  description: "John Acosta · Applied AI & Software Engineering",
+
+  // 2-3 sentences under the name. null hides it.
+  about: null,
+
+  // Columns under the intro. Each has a title plus any of body, items, updated ("YYYY-MM").
+  // An empty list hides it.
+  board: [
+    {
+      title: "Now",
+      body: "Final year of computer science at NJIT. Building my foundation in AI safety to understand the mechanisms behind the technology disrupting the world.",
+      updated: "2026-10",
+    },
+    {
+      title: "How I work",
+      items: [
+        "Understand the why first.",
+        "Ask if it's feasible, viable, and desirable.",
+        "Own it end to end.",
+        "Let feedback shape the idea.",
+      ],
+    },
+  ],
+
+  // icon: file, linkedin, github, or mail.
+  links: [
+    { label: "Resume", href: "/resume.pdf", icon: "file" },
+    { label: "LinkedIn", href: "https://linkedin.com/in/johnacosta1/", icon: "linkedin" },
+    { label: "GitHub", href: "https://github.com/502john", icon: "github" },
+    { label: "Email", href: "mailto:johnacosta502@gmail.com", icon: "mail" },
+  ],
+
+  // Home page sections, in order. id is experience, leadership, or projects.
+  sections: [
+    { id: "experience", title: "Experience" },
+    { id: "leadership", title: "Leadership" },
+    { id: "projects", title: "Projects" },
+  ],
+
+  labels: {
+    present: "Present",
+    fullStory: "Full story",
+    details: "Details",
+    updated: "Updated",
+    back: "Back",
+    previous: "Previous",
+    next: "Next",
+    close: "Close",
+    viewPhoto: "View photo",
+  },
+};

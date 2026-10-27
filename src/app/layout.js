@@ -1,17 +1,23 @@
 
 import "./globals.css";
-
+import { site } from "@/content/site";
 
 export const metadata = {
-  title: "John Acosta",
-  description: "Links to my work.",
+  title: site.name,
+  description: site.description,
 };
+
+// Apply the saved theme before first paint (AnimatedThemeToggler saves it).
+const themeScript = `try{if(localStorage.getItem("theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}`;
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>
-        <div style={{ minWidth: 400, overflowX: "hidden" }}>
+        <div>
           {/* <SmoothCursor /> */}
         {children}
         </div>

@@ -184,11 +184,6 @@
   }
   body {
     @apply bg-background text-foreground;
-
-    /* Appended to enforce minimum width for CARD */
-    min-width: 400px;
-    overflow-x: hidden;
-
   }
 }
 

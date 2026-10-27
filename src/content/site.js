@@ -14,7 +14,7 @@ export const site = {
   board: [
     {
       title: "Now",
-      body: "Final year of computer science at NJIT. Building my foundation in AI safety to understand the mechanisms behind the technology disrupting the world.",
+      body: "Final year of computer science at NJIT. Building my foundation in AI to understand the mechanisms behind the technology disrupting the world.",
       updated: "2026-10",
     },
     {

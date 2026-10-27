@@ -39,13 +39,23 @@ export const AnimatedThemeToggler = ({
   const toggleTheme = useCallback(async () => {
     if (!buttonRef.current) return
 
-    await document.startViewTransition(() => {
-      flushSync(() => {
-        const newTheme = !isDark
-        setIsDark(newTheme)
-        document.documentElement.classList.toggle("dark")
+    const applyTheme = () => {
+      const newTheme = !isDark
+      setIsDark(newTheme)
+      document.documentElement.classList.toggle("dark", newTheme)
+      try {
         localStorage.setItem("theme", newTheme ? "dark" : "light")
-      })
+      } catch {}
+    }
+
+    // Browsers without View Transitions (Safari < 18, Firefox < 144) switch without the animation.
+    if (!document.startViewTransition) {
+      applyTheme()
+      return
+    }
+
+    await document.startViewTransition(() => {
+      flushSync(applyTheme)
     }).ready
 
     const { top, left, width, height } =

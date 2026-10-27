@@ -1,5 +1,6 @@
 "use client";
-import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
+import { SiteHeader } from "@/components/portfolio/site-header";
+import { site } from "@/content/site";
 import { RetroGrid } from "@/components/ui/retro-grid";
 import { Button } from "@/components/ui/button";
 import { SpinningText } from "@/components/ui/spinning-text";
@@ -36,9 +37,7 @@ export default function CardPage() {
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center p-4">
-      <div className="fixed top-4 right-4 z-50">
-        <AnimatedThemeToggler />
-      </div>
+      <SiteHeader pages={site.pages} />
 
       {/* Background - hidden on mobile, visible on tablet+ */}
 

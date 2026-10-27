@@ -28,6 +28,12 @@ export const site = {
     },
   ],
 
+  // The switch in the top-left corner of the portfolio and /card.
+  pages: [
+    { label: "Portfolio", href: "/" },
+    { label: "Card", href: "/card" },
+  ],
+
   // icon: file, linkedin, github, or mail.
   links: [
     { label: "Resume", href: "/resume.pdf", icon: "file" },

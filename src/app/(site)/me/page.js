@@ -4,10 +4,9 @@ import { desk } from "@/content/desk";
 import { site } from "@/content/site";
 import { visible } from "@/lib/content";
 import { deskPhotos } from "@/lib/desk-photos";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata = {
-  title: `${site.me.title} | ${site.name}`,
-};
+export const metadata = pageMetadata({ title: `${site.me.title} | ${site.name}`, description: site.me.hint });
 
 export default function MePage() {
   const items = visible(desk).map((card) => ({ ...card, photos: deskPhotos(card.slug) }));

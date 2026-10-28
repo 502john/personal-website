@@ -1,11 +1,9 @@
 
 import "./globals.css";
 import { site } from "@/content/site";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata = {
-  title: site.name,
-  description: site.description,
-};
+export const metadata = pageMetadata({ title: site.name, description: site.description });
 
 // Apply the saved theme before first paint (AnimatedThemeToggler saves it).
 const themeScript = `try{if(localStorage.getItem("theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}`;

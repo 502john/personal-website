@@ -3,8 +3,9 @@
 export const site = {
   name: "John Acosta",
   tagline: "Applied AI & Software Engineering",
-  // Shown in search results and link previews.
-  description: "John Acosta · Applied AI & Software Engineering",
+  // Shown in search results and under the title when a link to the site is shared.
+  description:
+    "Applied AI and software engineering. Final year of computer science at NJIT, building my foundation in AI.",
 
   // 2-3 sentences under the name. null hides it.
   about: null,

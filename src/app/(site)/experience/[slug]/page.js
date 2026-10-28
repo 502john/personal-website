@@ -7,6 +7,7 @@ import { StoryBlocks } from "@/components/portfolio/story-blocks";
 import { experience } from "@/content/experience";
 import { site } from "@/content/site";
 import { storyHref, withStories } from "@/lib/content";
+import { pageMetadata } from "@/lib/metadata";
 
 // Only entries with a story get a page.
 export const dynamicParams = false;
@@ -18,7 +19,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const entry = withStories(experience).find((e) => e.slug === slug);
-  return entry ? { title: `${entry.role} · ${entry.org} | ${site.name}` } : {};
+  return entry ? pageMetadata({ title: `${entry.role} · ${entry.org} | ${site.name}`, description: entry.why }) : {};
 }
 
 export default async function ExperiencePage({ params }) {

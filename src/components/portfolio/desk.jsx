@@ -10,10 +10,11 @@ import { DeskRoom } from "./desk-room";
 // At most `max` objects to a row, with the rows as even as possible.
 const balanced = (max) => (n) => Math.ceil(n / Math.ceil(n / max));
 
-// Columns and row height (rem) for phone, tablet (sm), and desktop (lg). Wider layouts add
-// columns as objects are added, up to the point where objects would bury each other.
+// Columns and row height for phone, tablet (sm), and desktop (lg): em on phone and desktop,
+// rem on tablet. Wider layouts add columns as objects are added, up to the point where objects
+// would bury each other.
 const LAYOUTS = [
-  { cols: () => 2, rowHeight: 13 },
+  { cols: balanced(3), rowHeight: 13 },
   { cols: balanced(4), rowHeight: 16 },
   { cols: balanced(5), rowHeight: 18 },
 ];
@@ -23,25 +24,40 @@ const VIEW = { tilt: 48, turn: -6 };
 const LIMITS = { tilt: [15, 60], turn: [-25, 25] };
 const clamp = (v, [lo, hi]) => Math.min(hi, Math.max(lo, v));
 
-// On desktop the scene is sized in em, so one font size zooms all of it: as large as 16px, or
-// smaller so the whole desk fits the window. These mirror the scene's lg: classes below.
-const DESKTOP = { width: 64, gap: 10, perspective: 100, eye: 0.2, scene: 0.95, legs: 3 }; // em
+// Phone and desktop scenes are sized in em, so one font size zooms all of each: as large as
+// `font`, or smaller so the whole desk fits the screen. A phone runs out of width first, so it
+// fits both ways. These mirror the scene's classes below.
+const ZOOM = {
+  phone: { col: 11, perspective: 240, font: 12, smallest: 7, across: "100vw - 2rem" },
+  desktop: { width: 64, perspective: 100, font: 16, smallest: 8 },
+};
+const SCENE = { gap: 10, legs: 3, eye: 0.2, height: 0.95 }; // em, then shares of the scene and desk
 const ABOVE = "10rem"; // the page title above the desk, plus a little room below it
 
-// How far the desk's front edge sits below the top of the scene with the camera at rest, in em.
-function frontEdge(depth) {
-  const { width, perspective, eye, scene } = DESKTOP;
+// Where the desk's corners land with the camera at rest, in em: how wide they spread, and how
+// far below the top of the scene the front edge sits.
+function project(width, depth, perspective) {
   const tilt = (VIEW.tilt * Math.PI) / 180;
-  const turn = (Math.abs(VIEW.turn) * Math.PI) / 180;
-  const drop = (width / 2) * Math.sin(turn) + (depth / 2) * Math.cos(turn); // its lowest corner
-  const top = depth * scene * eye;
-  const y = (depth * scene) / 2 + drop * Math.cos(tilt);
-  return top + (y - top) * (perspective / (perspective - drop * Math.sin(tilt)));
+  const turn = (VIEW.turn * Math.PI) / 180;
+  const scene = depth * SCENE.height;
+  const eye = scene * SCENE.eye;
+  let spread = 0;
+  let front = 0;
+  for (const [x, y] of [[-width, -depth], [width, -depth], [-width, depth], [width, depth]]) {
+    const across = (x * Math.cos(turn) - y * Math.sin(turn)) / 2;
+    const along = (x * Math.sin(turn) + y * Math.cos(turn)) / 2;
+    const near = perspective / (perspective - along * Math.sin(tilt));
+    spread = Math.max(spread, 2 * Math.abs(across) * near);
+    front = Math.max(front, eye + (scene / 2 + along * Math.cos(tilt) - eye) * near);
+  }
+  return { spread, front };
 }
 
-function fitFont(depth) {
-  const height = DESKTOP.gap + frontEdge(depth) + DESKTOP.legs;
-  return `clamp(8px, calc((100svh - ${ABOVE}) / ${height.toFixed(2)}), 16px)`;
+function fitFont(width, depth, { perspective, font, smallest, across }) {
+  const { spread, front } = project(width, depth, perspective);
+  const tall = `(100svh - ${ABOVE}) / ${(SCENE.gap + front + SCENE.legs).toFixed(2)}`;
+  const fit = across ? `min(${tall}, (${across}) / ${spread.toFixed(2)})` : `calc(${tall})`;
+  return `clamp(${smallest}px, ${fit}, ${font}px)`;
 }
 
 function subscribePointer(callback) {
@@ -83,6 +99,7 @@ export function Desk({ items, labels }) {
   }, [reduceMotion, tilt, turn]);
 
   const layouts = LAYOUTS.map(({ cols, rowHeight }) => scatter(items.length, cols(items.length), rowHeight));
+  const phoneWidth = LAYOUTS[0].cols(items.length) * ZOOM.phone.col;
   const raise = (i) => setStack((s) => [...s.filter((j) => j !== i), i]);
   // Untouched objects keep their order; touched ones go on top, most recent highest.
   const order = [...items.keys()].filter((i) => !stack.includes(i)).concat(stack);
@@ -110,18 +127,20 @@ export function Desk({ items, labels }) {
     <>
       <div
         style={{
-          "--h0": `${layouts[0].height}rem`,
+          "--w0": `${phoneWidth}em`,
+          "--h0": `${layouts[0].height}em`,
           "--h1": `${layouts[1].height}rem`,
           "--h2": `${layouts[2].height}em`,
-          "--fit": fitFont(layouts[2].height),
+          "--fit0": fitFont(phoneWidth, layouts[0].height, ZOOM.phone),
+          "--fit2": fitFont(ZOOM.desktop.width, layouts[2].height, ZOOM.desktop),
         }}
-        className="relative mt-32 h-[calc(var(--h0)*0.95)] [perspective:1600px] [perspective-origin:50%_20%] sm:mt-40 sm:h-[calc(var(--h1)*0.95)] lg:mx-auto lg:mt-[10em] lg:h-[calc(var(--h2)*0.95)] lg:max-w-[64em] lg:[font-size:var(--fit)] lg:[perspective:100em]"
+        className="relative mx-auto mt-[10em] h-[calc(var(--h0)*0.95)] w-[var(--w0)] [font-size:var(--fit0)] [perspective:240em] [perspective-origin:50%_20%] sm:mt-40 sm:h-[calc(var(--h1)*0.95)] sm:w-auto sm:[perspective:1600px] lg:mt-[10em] lg:h-[calc(var(--h2)*0.95)] lg:max-w-[64em] lg:[font-size:var(--fit2)] lg:[perspective:100em]"
       >
         <motion.div
           ref={deskRef}
           style={{ transform }}
           {...orbitHandlers}
-          className="absolute inset-x-0 top-1/2 h-[var(--h0)] rounded-[0.2em] border-[1.5px] border-foreground/70 bg-background bg-[radial-gradient(var(--border)_1px,transparent_1px)] [background-size:16px_16px] text-[12px] select-none [transform-style:preserve-3d] pointer-fine:cursor-grab pointer-fine:active:cursor-grabbing sm:h-[var(--h1)] sm:text-[14px] lg:h-[var(--h2)] lg:text-[1em] lg:[background-size:1em_1em]"
+          className="absolute inset-x-0 top-1/2 h-[var(--h0)] rounded-[0.2em] border-[1.5px] border-foreground/70 bg-background bg-[radial-gradient(var(--border)_1px,transparent_1px)] [background-size:1em_1em] select-none [transform-style:preserve-3d] pointer-fine:cursor-grab pointer-fine:active:cursor-grabbing sm:h-[var(--h1)] sm:text-[14px] sm:[background-size:16px_16px] lg:h-[var(--h2)] lg:text-[1em] lg:[background-size:1em_1em]"
         >
           <DeskRoom />
           {items.map((item, i) => {

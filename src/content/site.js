@@ -31,8 +31,16 @@ export const site = {
   // The switch in the top-left corner of the portfolio and /card.
   pages: [
     { label: "Portfolio", href: "/" },
+    { label: "Me", href: "/me" },
     { label: "Card", href: "/card" },
   ],
+
+  // The /me page. Objects on the desk are in content/desk/.
+  me: {
+    title: "Get to know me",
+    hint: "Pick up anything on the desk.",
+    orbitHint: "Drag the desk to look around.", // shown only with a mouse or trackpad
+  },
 
   // icon: file, linkedin, github, or mail.
   links: [
@@ -58,6 +66,7 @@ export const site = {
     previous: "Previous",
     next: "Next",
     close: "Close",
+    flip: "Flip",
     viewPhoto: "View photo",
   },
 };

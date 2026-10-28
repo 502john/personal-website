@@ -8,9 +8,12 @@ import { experience } from "@/content/experience";
 import { leadership } from "@/content/leadership";
 import { projects } from "@/content/projects";
 import { site } from "@/content/site";
+import { withSizes } from "@/lib/image-size";
 
 const sections = {
-  experience: () => <Chapters entries={experience} labels={site.labels} />,
+  experience: () => (
+    <Chapters entries={experience.map((e) => ({ ...e, photos: withSizes(e.photos) }))} labels={site.labels} />
+  ),
   leadership: () => <CompactList items={leadership} labels={site.labels} />,
   projects: () => <CompactList items={projects} labels={site.labels} />,
 };

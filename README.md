@@ -13,6 +13,7 @@ Everything on the portfolio comes from `src/content/`. Each file lists its field
 | Name, tagline, links, Now / How I work, section order | `src/content/site.js` |
 | Experience | `src/content/experience.js` |
 | Leadership, Projects | `src/content/leadership.js`, `projects.js` |
+| Objects on /me | `src/content/desk/` (one file each; photos in `public/me/<slug>/`) |
 
 - Entries sort by date. `end: null` marks one as current.
 - `hidden: true` hides an entry without deleting it.

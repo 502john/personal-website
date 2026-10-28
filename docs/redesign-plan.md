@@ -22,9 +22,10 @@ src/app/
   (site)/                    portfolio pages, share the theme toggle
     page.js                  /
     experience/[slug]/       /experience/<slug>, only for entries with a story
+    me/                      /me, a desk of objects to pick up (experimental)
     projects/tether/         /projects/tether (not linked from the home page)
   (card)/card/               /card
-src/content/                 site.js, experience.js, leadership.js, projects.js
+src/content/                 site.js, experience.js, leadership.js, projects.js, desk/
 src/components/portfolio/    Hero, Board, Chapters, Chapter, CompactList, PhotoStrip, ...
 src/lib/content.js           sorting, grouping, date formatting
 ```

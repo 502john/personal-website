@@ -30,7 +30,23 @@ export const experience = [
       "Led a team of five engineers to second place in PGIM's internal hackathon with an AI-powered Confluence pipeline that detects stale pages, suggests updates, and notifies reviewers, improving the documentation Copilot and Claude MCP rely on.",
     ],
     stack: ["Terraform", "AWS", "CloudFormation", "React", "FastAPI"],
-    photos: [],
+    photos: [
+      {
+        src: "/imgs/experience/pgim/ron-andrews-scholarship.jpg",
+        alt: "John on the screen at PGIM's Ron Andrews Scholarship Program",
+        caption: "Ron Andrews Scholarship Program",
+      },
+      {
+        src: "/imgs/experience/pgim/hackathon-second-place.jpg",
+        alt: "A handwritten second place sign from PGIM's internal hackathon",
+        caption: "Second place at the internal hackathon",
+      },
+      {
+        src: "/imgs/experience/pgim/intern-team.jpg",
+        alt: "John with three fellow interns under the PGIM sign",
+        caption: "The intern team",
+      },
+    ],
     files: [],
     story: null,
   },
@@ -84,7 +100,23 @@ export const experience = [
       "Engineered modular Python preprocessing (NumPy, pandas) to clean, trim, and interpolate 10+ multi-location epidemic datasets (~900 weekly observations each), producing consistent train/test splits for rolling-origin forecasting across 5 diseases.",
     ],
     stack: ["Python", "NumPy", "pandas", "joblib"],
-    photos: [],
+    photos: [
+      {
+        src: "/imgs/experience/lijing-wang-lab-forecasting/presenting-at-nebec.jpg",
+        alt: "John presenting at a podium at NEBEC 2026",
+        caption: "Presenting at NEBEC 2026",
+      },
+      {
+        src: "/imgs/experience/lijing-wang-lab-forecasting/rishik-presenting-at-nebec.jpg",
+        alt: "Rishik pointing to the forecasting error formula on a slide",
+        caption: "Rishik presenting at NEBEC 2026",
+      },
+      {
+        src: "/imgs/experience/lijing-wang-lab-forecasting/rishik-on-the-way.jpg",
+        alt: "Rishik taking a photo at the top of a stairway",
+        caption: "Rishik on the way",
+      },
+    ],
     files: [],
     story: null,
   },

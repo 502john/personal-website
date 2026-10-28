@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import { renderToString } from "react-dom/server"
 
 function easeOutCubic(t) {
@@ -11,7 +11,6 @@ export function IconCloud({
   images
 }) {
   const canvasRef = useRef(null)
-  const [iconPositions, setIconPositions] = useState([])
   const [isDragging, setIsDragging] = useState(false)
   const [lastMousePos, setLastMousePos] = useState({ x: 0, y: 0 })
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
@@ -73,8 +72,8 @@ export function IconCloud({
     iconCanvasesRef.current = newIconCanvases
   }, [icons, images])
 
-  // Generate initial icon positions on a sphere
-  useEffect(() => {
+  // Icon positions on a sphere; they depend only on how many icons there are
+  const iconPositions = useMemo(() => {
     const items = icons ?? images ?? []
     const newIcons = []
     const numIcons = items.length || 20
@@ -100,7 +99,7 @@ export function IconCloud({
         id: i,
       })
     }
-    setIconPositions(newIcons)
+    return newIcons
   }, [icons, images])
 
   // Handle mouse events

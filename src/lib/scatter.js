@@ -1,7 +1,9 @@
-// Deterministic per seed, so the server and browser render the same layout.
+// Deterministic per seed, so the server and browser render the same layout. Rounded because
+// Node and browsers can disagree on Math.sin in the last few digits, which React reports as a
+// hydration mismatch.
 export function random(seed) {
   const x = Math.sin(seed * 9301 + 49297) * 233280;
-  return x - Math.floor(x);
+  return Math.round((x - Math.floor(x)) * 1e6) / 1e6;
 }
 
 // Loose grid with jitter: spots as percentages of the desk, plus the desk height in rem.

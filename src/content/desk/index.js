@@ -10,6 +10,9 @@
 // kind "photos": its top three prints are the first three photos.
 // Use .jpg, .png, or .webp (iPhone .heic files won't display in browsers).
 //
+// Videos: drop an .mp4 in the same folder and it plays on the back, below the photos. Phone
+// videos are large, so shrink one first (720p H.264 keeps a minute under about 6 MB).
+//
 // Fields
 //   slug      matches the photo folder in public/me/
 //   kind      note, ticket, polaroid, photos, index, record, book, or receipt
@@ -33,6 +36,7 @@ import { card as greatMindsInStem } from "./great-minds-in-stem";
 import { card as cats } from "./cats";
 import { card as pgim } from "./pgim";
 import { card as friends } from "./friends";
+import { card as shpe } from "./shpe";
 
 export const desk = [
   doIt,
@@ -44,6 +48,7 @@ export const desk = [
   pragmaticProgrammer,
   friends,
   dataIntensiveApplications,
+  shpe,
   coffeeOrder,
   offTheClock,
   greatMindsInStem,

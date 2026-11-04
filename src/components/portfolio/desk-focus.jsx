@@ -113,6 +113,24 @@ export function DeskFocus({ item, origin, labels, reduceMotion, onClosed }) {
                   <PhotoStack photos={item.photos} title={item.title} labels={labels} reduceMotion={reduceMotion} />
                 )}
 
+                {item.videos?.map((video) => {
+                  const shape = video.width && video.height ? video.width / video.height : 16 / 9;
+                  return (
+                    <video
+                      key={video.src}
+                      // #t=0.1 makes iPhones show the first frame instead of a blank box.
+                      src={`${video.src}#t=0.1`}
+                      aria-label={video.alt || item.title}
+                      controls
+                      playsInline
+                      preload="metadata"
+                      // Its own shape, no taller than 60% of the screen.
+                      style={{ aspectRatio: shape, width: `min(100%, calc(60vh * ${shape.toFixed(4)}))` }}
+                      className="mx-auto mt-5 block rounded-md border border-dotted bg-black"
+                    />
+                  );
+                })}
+
                 {/* Loads only once the back is showing, so the desk itself stays light. */}
                 {flipped && player && (
                   <iframe

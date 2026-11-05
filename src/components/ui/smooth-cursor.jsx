@@ -67,7 +67,7 @@ export function SmoothCursor({
   const [isMoving, setIsMoving] = useState(false)
   const lastMousePos = useRef({ x: 0, y: 0 })
   const velocity = useRef({ x: 0, y: 0 })
-  const lastUpdateTime = useRef(Date.now())
+  const lastUpdateTime = useRef(0) // set on mount; reading the clock during render isn't allowed
   const previousAngle = useRef(0)
   const accumulatedRotation = useRef(0)
 
@@ -85,6 +85,8 @@ export function SmoothCursor({
   })
 
   useEffect(() => {
+    lastUpdateTime.current = Date.now()
+
     const updateVelocity = (currentPos) => {
       const currentTime = Date.now()
       const deltaTime = currentTime - lastUpdateTime.current

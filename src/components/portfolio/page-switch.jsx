@@ -10,7 +10,8 @@ export function PageSwitch({ pages }) {
   return (
     <nav className="flex items-center rounded-full border border-dotted bg-background p-0.5 text-xs">
       {pages.map((page) => {
-        const current = pathname === page.href;
+        // A section stays lit on its inner pages too (a post under /blog).
+        const current = page.href === "/" ? pathname === "/" : pathname.startsWith(page.href);
         return (
           <Link
             key={page.href}

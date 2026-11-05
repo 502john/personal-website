@@ -33,6 +33,7 @@ export const site = {
   pages: [
     { label: "Portfolio", href: "/" },
     { label: "Me", href: "/me" },
+    { label: "Blog", href: "/blog" },
     { label: "Card", href: "/card" },
   ],
 
@@ -41,6 +42,13 @@ export const site = {
     title: "Get to know me",
     hint: "Pick up anything on the desk.",
     orbitHint: "Drag the desk to look around.", // shown only with a mouse or trackpad
+  },
+
+  // The /blog page. Posts are Markdown files in content/blog/.
+  blog: {
+    title: "Blog",
+    description: "Notes on what I'm building, researching, and learning.",
+    empty: "Nothing here yet.",
   },
 
   // icon: file, linkedin, github, or mail.
@@ -69,5 +77,7 @@ export const site = {
     close: "Close",
     flip: "Flip",
     viewPhoto: "View photo",
+    minRead: "min read",
+    draft: "Draft",
   },
 };

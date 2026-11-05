@@ -191,3 +191,27 @@
     animation: none;
     mix-blend-mode: normal;
 }
+/* Code colors in blog posts (rehype-highlight), kept close to the site's monochrome look. */
+.hljs-comment,
+.hljs-quote {
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+.hljs-keyword,
+.hljs-built_in,
+.hljs-literal,
+.hljs-type,
+.hljs-selector-tag {
+  font-weight: 600;
+}
+.hljs-string,
+.hljs-number,
+.hljs-regexp,
+.hljs-attr {
+  color: color-mix(in oklch, var(--foreground) 60%, oklch(0.6 0.13 250));
+}
+.hljs-title,
+.hljs-section {
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}

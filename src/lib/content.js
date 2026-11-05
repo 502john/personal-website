@@ -6,6 +6,12 @@ export function formatMonth(date) {
   return month ? `${MONTHS[Number(month) - 1]} ${year}` : year;
 }
 
+// "2026-11-05" -> "Nov 5, 2026"
+export function formatDay(date) {
+  const [year, month, day] = date.split("-");
+  return `${MONTHS[Number(month) - 1]} ${Number(day)}, ${year}`;
+}
+
 export function visible(items) {
   return items.filter((item) => !item.hidden);
 }

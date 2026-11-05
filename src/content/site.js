@@ -79,5 +79,6 @@ export const site = {
     viewPhoto: "View photo",
     minRead: "min read",
     draft: "Draft",
+    comingSoon: "Coming soon",
   },
 };

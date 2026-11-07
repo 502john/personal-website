@@ -1,25 +1,90 @@
 "use client";
 
 import Image from "next/image";
+import { MotionConfig, motion } from "motion/react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const TIERS = ["S", "A", "B", "C", "D"];
+const STACK_FROM = 5; // a tier with this many flavors or more stacks up
+const SHOWN = 3; // flavors visible in a stack; the rest are counted
+
+const chip = "rounded-md border border-foreground/60 bg-background px-2 py-0.5 text-xs";
 
 // A flavor with proof opens its photo; one without is just a name.
 function Flavor({ flavor, onProof }) {
-  const chip = "rounded-md border border-foreground/60 px-2 py-0.5 text-xs";
-  if (!flavor.proof) return <li className={cn(chip, "text-muted-foreground")}>{flavor.name}</li>;
+  if (!flavor.proof) return <span className={cn(chip, "block text-muted-foreground")}>{flavor.name}</span>;
   return (
-    <li>
-      <button
-        type="button"
-        onClick={() => onProof(flavor)}
-        className={cn(chip, "cursor-pointer border-foreground/80 hover:bg-foreground/10")}
+    <button
+      type="button"
+      onClick={() => onProof(flavor)}
+      className={cn(chip, "block cursor-pointer border-foreground/80 hover:bg-foreground/10")}
+    >
+      {flavor.name}
+    </button>
+  );
+}
+
+// One tier. With many flavors it stacks up like a hand of cards and fans out when tapped.
+function Row({ label, items, labels, onProof }) {
+  const [open, setOpen] = useState(false);
+  const stackable = items.length >= STACK_FROM;
+  const stacked = stackable && !open;
+  const hidden = items.length - SHOWN;
+
+  return (
+    <div className="flex gap-3 border-t border-dotted py-3 first:border-t-0">
+      <div
+        className={cn(
+          "grid size-9 shrink-0 place-items-center rounded-md border-[1.5px] border-foreground/80 font-serif font-bold",
+          !label && "w-auto min-w-9 px-2 text-[0.65rem] font-normal text-muted-foreground"
+        )}
       >
-        {flavor.name}
-      </button>
-    </li>
+        {label ?? labels.notReviewed}
+      </div>
+
+      {stacked ? (
+        <button
+          type="button"
+          aria-expanded="false"
+          aria-label={`${labels.showAll} ${items.length}`}
+          onClick={() => setOpen(true)}
+          className="flex min-h-9 cursor-pointer items-center"
+        >
+          {items.slice(0, SHOWN).map((flavor, i) => (
+            <motion.span
+              key={flavor.name}
+              layout
+              className={cn(chip, "block text-muted-foreground", i > 0 && "-ml-8")}
+              style={{ zIndex: SHOWN - i, rotate: (i - 1) * 2 }}
+            >
+              {flavor.name}
+            </motion.span>
+          ))}
+          <span className="relative z-0 -ml-2 pl-3 text-xs text-muted-foreground">+{hidden}</span>
+        </button>
+      ) : (
+        <div className="min-w-0">
+          <ul className="flex min-h-9 flex-wrap items-center gap-1.5">
+            {items.map((flavor) => (
+              <motion.li key={flavor.name} layout>
+                <Flavor flavor={flavor} onProof={onProof} />
+              </motion.li>
+            ))}
+          </ul>
+          {stackable && (
+            <button
+              type="button"
+              aria-expanded="true"
+              onClick={() => setOpen(false)}
+              className="mt-1.5 text-xs text-muted-foreground hover:text-foreground"
+            >
+              {labels.stackUp}
+            </button>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -59,24 +124,12 @@ export function TierList({ flavors, labels }) {
   ];
 
   return (
-    <div className="mt-4">
-      {rows.map(({ label, items }) => (
-        <div key={label ?? "none"} className="flex gap-3 border-t border-dotted py-3 first:border-t-0">
-          <div
-            className={cn(
-              "grid size-9 shrink-0 place-items-center rounded-md border-[1.5px] border-foreground/80 font-serif font-bold",
-              !label && "w-auto min-w-9 px-2 text-[0.65rem] font-normal text-muted-foreground"
-            )}
-          >
-            {label ?? labels.notReviewed}
-          </div>
-          <ul className="flex min-h-9 flex-wrap items-center gap-1.5">
-            {items.map((flavor) => (
-              <Flavor key={flavor.name} flavor={flavor} onProof={setOpen} />
-            ))}
-          </ul>
-        </div>
-      ))}
-    </div>
+    <MotionConfig reducedMotion="user">
+      <div className="mt-4">
+        {rows.map(({ label, items }) => (
+          <Row key={label ?? "none"} label={label} items={items} labels={labels} onProof={setOpen} />
+        ))}
+      </div>
+    </MotionConfig>
   );
 }

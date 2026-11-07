@@ -78,6 +78,8 @@ export const site = {
     flip: "Flip",
     viewPhoto: "View photo",
     notReviewed: "Not reviewed",
+    showAll: "Show all",
+    stackUp: "Stack up",
     backToTiers: "Back to the tiers",
     minRead: "min read",
     draft: "Draft",

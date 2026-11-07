@@ -38,4 +38,4 @@ Objects are drawn in CSS in `src/components/portfolio/desk-object.jsx`, and `ind
 
 `AGENTS.md` warns that this Next.js version differs from older ones. Read the guides in `node_modules/next/dist/docs/` before writing code.
 
-Preview with `npm run dev`. Design notes are in `docs/redesign-plan.md`.
+Preview with `npm run dev`.

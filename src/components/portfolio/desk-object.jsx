@@ -138,20 +138,67 @@ function IndexCard({ item }) {
   );
 }
 
-// A tall can in line art: rim, pull tab, a band for the label.
-function Can({ item }) {
+// A can standing upright, seen from the side: used when it's picked up.
+function CanFront() {
   return (
-    <div className="relative h-[14em] w-[7em]">
-      <div className={cn(paper, "absolute inset-x-0 top-[0.6em] bottom-[0.6em] flex flex-col items-center justify-center rounded-[0.9em]")}>
-        <div className="absolute inset-x-[0.5em] top-[2.6em] border-t border-foreground/50" />
-        <div className="absolute inset-x-[0.5em] bottom-[2.6em] border-t border-foreground/50" />
-        <p className="rotate-[-90deg] font-serif text-[1.1em] leading-none font-bold tracking-[0.15em] whitespace-nowrap uppercase">Celsius</p>
+    <div className="relative h-[12em] w-[5.2em]">
+      <div className={cn(paper, "absolute inset-x-0 top-[0.6em] bottom-[0.6em] rounded-b-[1em]")}>
+        <div className="absolute inset-x-0 top-[1.6em] border-t border-foreground/50" />
+        <div className="absolute inset-x-0 bottom-[1.6em] border-t border-foreground/50" />
+        <p className="absolute inset-0 grid place-items-center [writing-mode:vertical-rl] rotate-180 font-serif text-[1.1em] font-bold tracking-[0.2em] uppercase">Celsius</p>
       </div>
-      <span className="absolute inset-x-[0.35em] top-0 h-[1.2em] rounded-[50%] border-[1.5px] border-foreground/80 bg-background" />
-      <span className="absolute top-[0.35em] left-1/2 h-[0.5em] w-[1.6em] -translate-x-1/2 rounded-full border-[1.5px] border-foreground/80" />
-      <span className="absolute inset-x-[0.35em] bottom-0 h-[1.2em] rounded-[50%] border-[1.5px] border-foreground/80 bg-background" />
+      <span className="absolute inset-x-0 top-0 h-[1.2em] rounded-[50%] border-[1.5px] border-foreground/80 bg-background" />
+      <span className="absolute top-[0.35em] left-1/2 h-[0.5em] w-[1.4em] -translate-x-1/2 rounded-full border-[1.5px] border-foreground/80" />
+      <span className="absolute inset-x-0 bottom-0 h-[1.2em] rounded-[50%] border-[1.5px] border-foreground/80 bg-background [clip-path:inset(50%_0_0_0)]" />
     </div>
   );
+}
+
+// The can on the desk: a real cylinder standing on its base. Its body is a ring of narrow
+// vertical strips, each one a flat face turned to point outward, with a letter of the name
+// on the ones facing front. Only the outward faces are drawn.
+const CAN = { radius: 1.8, height: 11, sides: 18, name: "CELSIUS" };
+
+function StandingCan() {
+  const { radius: r, height: h, sides: n, name } = CAN;
+  const width = 2 * r * Math.sin(Math.PI / n);
+  return (
+    <div className="relative size-[3.6em] [transform-style:preserve-3d]">
+      <div className="absolute top-1/2 left-1/2 [transform-style:preserve-3d]">
+        {Array.from({ length: n }, (_, i) => {
+          const letter = name[name.length - 1 - (i - (n / 2 - (name.length - 1) / 2))]; // facing front
+          return (
+            <div
+              key={i}
+              className="absolute top-0 grid place-items-center bg-[color-mix(in_oklch,var(--background)_88%,var(--foreground))] font-serif text-[0.75em] font-bold text-foreground/70 [backface-visibility:hidden] [transform-origin:50%_0]"
+              style={{
+                left: `${-width / 2}em`,
+                width: `${width + 0.02}em`,
+                height: `${h}em`,
+                transform: `rotateZ(${(i * 360) / n}deg) translateY(${-r}em) rotateX(90deg)`,
+                backgroundImage:
+                  "linear-gradient(to bottom, currentColor 0 1.5px, transparent 1.5px 12%, color-mix(in oklch, currentColor 60%, transparent) 12% calc(12% + 1px), transparent calc(12% + 1px) calc(88% - 1px), color-mix(in oklch, currentColor 60%, transparent) calc(88% - 1px) 88%, transparent 88% calc(100% - 1.5px), currentColor calc(100% - 1.5px))",
+              }}
+            >
+              {letter && <span className="rotate-180">{letter}</span>}
+            </div>
+          );
+        })}
+        {/* The top: a disc with a rim, a recess, and the pull tab. */}
+        <div
+          className="absolute rounded-full border-[1.5px] border-foreground/80 bg-background [transform-style:preserve-3d]"
+          style={{ left: `${-r}em`, top: `${-r}em`, width: `${2 * r}em`, height: `${2 * r}em`, transform: `translateZ(${h}em)` }}
+        >
+          <span className="absolute inset-[0.35em] rounded-full border border-foreground/50" />
+          <span className="absolute top-[40%] left-1/2 h-[0.9em] w-[1.5em] -translate-x-1/2 rounded-full border-[1.5px] border-foreground/80" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Can({ solid }) {
+  return solid ? <StandingCan /> : <CanFront />;
 }
 
 const kinds = {
@@ -166,7 +213,7 @@ const kinds = {
   index: IndexCard,
 };
 
-export function DeskObject({ item }) {
+export function DeskObject({ item, solid }) {
   const Kind = kinds[item.kind] ?? Note;
-  return <Kind item={item} />;
+  return <Kind item={item} solid={solid} />;
 }

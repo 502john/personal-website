@@ -51,7 +51,7 @@ const tiers = {
   S: ["Cherry Cola", "Kiwi Strawberry"],
   A: [],
   B: ["Grape Rush", "Arctic Vibe"],
-  C: [],
+  C: ["Mango Lemonade"],
   D: [],
 };
 

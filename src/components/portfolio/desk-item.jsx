@@ -2,7 +2,7 @@
 
 import { animate, motion, useMotionValue, useSpring, useTransform, useVelocity } from "motion/react";
 import { useEffect, useRef } from "react";
-import { DeskObject } from "./desk-object";
+import { DeskObject, THICKNESS } from "./desk-object";
 
 // Note on 3D: opacity below 1 flattens an element's 3D children, so fades only ever go on
 // flat leaves (the object and its shadow), never on the wrappers that carry depth.
@@ -19,9 +19,31 @@ function toDesk(dx, dy, tilt, turn) {
   };
 }
 
+// The four sides of a slab: each is a strip hinged to an edge of the top face and folded down
+// to the desk. Plain boxes, so thickness costs four elements and repeats no content.
+const side = "absolute bg-[color-mix(in_oklch,var(--background)_82%,var(--foreground))] border-foreground/70";
+function Edges({ depth, opacity }) {
+  const h = `${depth}em`;
+  const edges = [
+    "top-full left-0 w-full border-x [transform-origin:50%_0] [transform:rotateX(90deg)]",
+    "top-0 left-0 w-full border-x [transform-origin:50%_0] [transform:rotateX(90deg)]",
+    "top-0 left-0 h-full border-y [transform-origin:0_50%] [transform:rotateY(-90deg)]",
+    "top-0 left-full h-full border-y [transform-origin:0_50%] [transform:rotateY(-90deg)]",
+  ];
+  return edges.map((edge, i) => (
+    <motion.div
+      key={i}
+      aria-hidden="true"
+      className={`${side} ${edge}`}
+      style={{ opacity, ...(i < 2 ? { height: h } : { width: h }) }}
+    />
+  ));
+}
+
 // One object lying on the desk: drops in on load, lifts on hover, slides and can be tossed.
 export function DeskItem({ item, index, rotate, deskRef, tilt, turn, canDrag, reduceMotion, picked, onRaise, onOpen }) {
   const buttonRef = useRef(null);
+  const depth = THICKNESS[item.kind] ?? 0;
   const drag = useRef(null);
   const dragged = useRef(false);
 
@@ -107,7 +129,9 @@ export function DeskItem({ item, index, rotate, deskRef, tilt, turn, canDrag, re
             className="absolute -inset-[6%] rounded-[1em] bg-[radial-gradient(closest-side,rgb(0_0_0/0.45),transparent)]"
             style={{ opacity: picked ? 0 : shadowOpacity, scale: shadowScale }}
           />
-          <motion.div className="[transform-style:preserve-3d]" style={{ z: height }}>
+          <motion.div className="relative [transform-style:preserve-3d]" style={{ z: height }}>
+            {depth > 0 && <Edges depth={depth} opacity={picked ? 0 : appear} />}
+            <div className="[transform-style:preserve-3d]" style={{ transform: `translateZ(${depth}em)` }}>
             <motion.button
               ref={buttonRef}
               type="button"
@@ -128,6 +152,7 @@ export function DeskItem({ item, index, rotate, deskRef, tilt, turn, canDrag, re
             >
               <DeskObject item={item} solid />
             </motion.button>
+            </div>
           </motion.div>
         </motion.div>
       </motion.div>

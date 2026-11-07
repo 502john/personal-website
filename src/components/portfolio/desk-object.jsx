@@ -145,7 +145,7 @@ const CAN_ART = { maskImage: "url(/art/celsius-can.svg)", maskRepeat: "no-repeat
 function CanFront() {
   return (
     <div className="relative h-[10.8em] w-[4em]">
-      <div className="absolute inset-x-0 top-[0.25em] bottom-[0.15em] rounded-[0.35em_0.35em_0.5em_0.5em] border-[1.5px] border-foreground/80 bg-[color-mix(in_oklch,var(--background)_92%,var(--foreground))]">
+      <div className="absolute inset-x-0 top-[0.25em] bottom-[0.15em] rounded-[0.35em_0.35em_0.5em_0.5em] border-[1.5px] border-foreground/80 bg-background">
         <span className="absolute inset-x-[0.15em] top-[0.6em] bottom-[0.5em] bg-foreground/85" style={{ ...CAN_ART, maskSize: "100% 100%" }} />
       </div>
       <span className="absolute inset-x-[0.2em] top-0 h-[0.45em] rounded-t-[0.3em] bg-foreground/90" />
@@ -170,6 +170,9 @@ const CAN = {
   lid: { radius: 0.4, height: 2.64 },
 };
 
+// Share of the line color mixed into face i of n: light from the front left, shade behind.
+const shade = (i, n) => 2 + 9 * (0.5 - 0.5 * Math.cos(((i / n) * 2 - 0.7) * Math.PI));
+
 function CanPart({ part, index }) {
   const { diameter: d, sides: n } = CAN;
   const [r1, y1] = part.from.map((v) => v * d);
@@ -187,9 +190,12 @@ function CanPart({ part, index }) {
       key={`${part.name}-${i}`}
       className={cn(
         "absolute top-0 [backface-visibility:hidden] [transform-origin:50%_0]",
-        rim ? "bg-foreground/90" : "bg-[color-mix(in_oklch,var(--background)_88%,var(--foreground))] text-foreground"
+        "border-t-[1.5px] border-foreground/70 text-foreground",
+        rim && "bg-foreground/90"
       )}
       style={{
+        // Paper with a faint tone that deepens toward the shaded side, so it reads as round.
+        backgroundColor: rim ? undefined : `color-mix(in oklch, var(--background) ${100 - shade(i, n)}%, var(--foreground))`,
         left: `${-bottom / 2}em`,
         width: `${bottom + 0.02}em`,
         height: `${length}em`,
@@ -225,7 +231,7 @@ function StandingCan() {
         ))}
         {/* The lid sits below the rim: a recessed disc with a scored opening and a tab above it. */}
         <div
-          className="absolute rounded-full border-[1.5px] border-foreground/70 bg-[color-mix(in_oklch,var(--background)_80%,var(--foreground))] [transform-style:preserve-3d]"
+          className="absolute rounded-full border-[1.5px] border-foreground/80 bg-background [transform-style:preserve-3d]"
           style={{ left: `${-r}em`, top: `${-r}em`, width: `${2 * r}em`, height: `${2 * r}em`, transform: `translateZ(${lid.height * d}em)` }}
         >
           <span className="absolute inset-[0.3em] rounded-full border border-foreground/40" />
@@ -236,7 +242,7 @@ function StandingCan() {
           style={{ left: `${-rimR}em`, top: `${-rimR}em`, width: `${2 * rimR}em`, height: `${2 * rimR}em`, borderWidth: `${0.04 * d}em`, transform: `translateZ(${2.7 * d}em)` }}
         />
         <div
-          className="absolute grid place-items-center rounded-[0.3em] border-[1.5px] border-foreground/80 bg-foreground/15"
+          className="absolute grid place-items-center rounded-[0.3em] border-[1.5px] border-foreground/80 bg-background"
           style={{ left: "-0.4em", top: "-1.05em", width: "0.8em", height: "0.95em", transform: `translateZ(${(lid.height + 0.02) * d}em)` }}
         >
           <span className="size-[0.35em] rounded-full border border-foreground/70" />

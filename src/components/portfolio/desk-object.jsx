@@ -138,7 +138,24 @@ function IndexCard({ item }) {
   );
 }
 
+// A tall can in line art: rim, pull tab, a band for the label.
+function Can({ item }) {
+  return (
+    <div className="relative h-[14em] w-[7em]">
+      <div className={cn(paper, "absolute inset-x-0 top-[0.6em] bottom-[0.6em] flex flex-col items-center justify-center rounded-[0.9em]")}>
+        <div className="absolute inset-x-[0.5em] top-[2.6em] border-t border-foreground/50" />
+        <div className="absolute inset-x-[0.5em] bottom-[2.6em] border-t border-foreground/50" />
+        <p className="rotate-[-90deg] font-serif text-[1.1em] leading-none font-bold tracking-[0.15em] whitespace-nowrap uppercase">Celsius</p>
+      </div>
+      <span className="absolute inset-x-[0.35em] top-0 h-[1.2em] rounded-[50%] border-[1.5px] border-foreground/80 bg-background" />
+      <span className="absolute top-[0.35em] left-1/2 h-[0.5em] w-[1.6em] -translate-x-1/2 rounded-full border-[1.5px] border-foreground/80" />
+      <span className="absolute inset-x-[0.35em] bottom-0 h-[1.2em] rounded-[50%] border-[1.5px] border-foreground/80 bg-background" />
+    </div>
+  );
+}
+
 const kinds = {
+  can: Can,
   polaroid: Polaroid,
   photos: Photos,
   ticket: Ticket,

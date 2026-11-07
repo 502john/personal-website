@@ -77,6 +77,8 @@ export const site = {
     close: "Close",
     flip: "Flip",
     viewPhoto: "View photo",
+    notReviewed: "Not reviewed",
+    backToTiers: "Back to the tiers",
     minRead: "min read",
     draft: "Draft",
     comingSoon: "Coming soon",

@@ -1,6 +1,7 @@
 import { CompactList } from "@/components/portfolio/compact-list";
 import { Container } from "@/components/portfolio/container";
 import { Hero } from "@/components/portfolio/hero";
+import { JumpLinks } from "@/components/portfolio/jump-links";
 import { Section } from "@/components/portfolio/section";
 import { Board } from "@/components/portfolio/board";
 import { Chapters } from "@/components/portfolio/chapters";
@@ -19,18 +20,18 @@ const sections = {
 };
 
 export default function HomePage() {
+  const shown = site.sections.filter(({ id }) => sections[id]);
+
   return (
     <Container className="pb-24">
       <Hero name={site.name} tagline={site.tagline} about={site.about} links={site.links} />
+      <JumpLinks sections={shown} label={site.labels.onThisPage} />
       <Board columns={site.board} labels={site.labels} />
-      {site.sections.map(({ id, title }) => {
-        const render = sections[id];
-        return render ? (
-          <Section key={id} id={id} title={title}>
-            {render()}
-          </Section>
-        ) : null;
-      })}
+      {shown.map(({ id, title }) => (
+        <Section key={id} id={id} title={title}>
+          {sections[id]()}
+        </Section>
+      ))}
     </Container>
   );
 }

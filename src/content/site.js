@@ -80,5 +80,7 @@ export const site = {
     minRead: "min read",
     draft: "Draft",
     comingSoon: "Coming soon",
+    onThisPage: "On this page",
+    pages: "Pages",
   },
 };

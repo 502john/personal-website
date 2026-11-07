@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 157 236" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="22" cy="34" r="5" stroke-width="1.5"/>
+  <circle cx="22" cy="34" r="2" stroke-width="1.5"/>
+  <path d="M106 40C84 28 50 38 44 70C39 96 60 112 88 106" stroke-width="3"/>
+  <path d="M106 40C80 44 64 58 64 74C64 88 76 94 92 88" stroke-width="3"/>
+  <text x="78" y="134" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-weight="900" font-size="23" textLength="124" lengthAdjust="spacingAndGlyphs" fill="#000" stroke="none">CELSIUS</text>
+  <text x="124" y="142" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-style="italic" font-weight="700" font-size="5.5" fill="#000" stroke="none">LIVE FIT</text>
+  <path d="M60 148C48 148 44 160 52 170C56 175 60 177 64 177C70 174 78 166 74 156C72 150 66 148 60 148Z" stroke-width="1.5"/>
+  <path d="M56 148l4-5 4 5" stroke-width="1.5"/>
+  <ellipse cx="104" cy="160" rx="22" ry="12" transform="rotate(-12 104 160)" stroke-width="1.5"/>
+  <ellipse cx="104" cy="160" rx="15" ry="7" transform="rotate(-12 104 160)" stroke-width="1"/>
+  <text x="78" y="190" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-weight="500" font-size="8" letter-spacing="1.2" fill="#000" stroke="none">SPARKLING</text>
+  <path d="M10 197H147M10 223H147" stroke-width="1.2"/>
+  <g font-family="Helvetica Neue, Arial, sans-serif" font-weight="800" font-size="4.6" text-anchor="middle" fill="#000" stroke="none">
+    <text x="78" y="205">ESSENTIAL ENERGY</text>
+    <text x="78" y="212">ACCELERATES METABOLISM</text>
+    <text x="78" y="219">BURNS BODY FAT</text>
+  </g>
+  <rect x="14" y="228" width="16" height="7" rx="1.5" stroke-width="1.2"/>
+  <circle cx="48" cy="231.5" r="3.6" stroke-width="1.2"/>
+  <circle cx="60" cy="231.5" r="3.6" stroke-width="1.2"/>
+  <text x="115" y="234" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="4" fill="#000" stroke="none">12 FL OZ (355 mL)</text>
+</svg>

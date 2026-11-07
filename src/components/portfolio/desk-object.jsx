@@ -138,59 +138,108 @@ function IndexCard({ item }) {
   );
 }
 
+// The can's artwork, drawn as a mask so it takes the line color of the theme.
+const CAN_ART = { maskImage: "url(/art/celsius-can.svg)", maskRepeat: "no-repeat" };
+
 // A can standing upright, seen from the side: used when it's picked up.
 function CanFront() {
   return (
-    <div className="relative h-[12em] w-[5.2em]">
-      <div className={cn(paper, "absolute inset-x-0 top-[0.6em] bottom-[0.6em] rounded-b-[1em]")}>
-        <div className="absolute inset-x-0 top-[1.6em] border-t border-foreground/50" />
-        <div className="absolute inset-x-0 bottom-[1.6em] border-t border-foreground/50" />
-        <p className="absolute inset-0 grid place-items-center [writing-mode:vertical-rl] rotate-180 font-serif text-[1.1em] font-bold tracking-[0.2em] uppercase">Celsius</p>
+    <div className="relative h-[10.8em] w-[4em]">
+      <div className="absolute inset-x-0 top-[0.25em] bottom-[0.15em] rounded-[0.35em_0.35em_0.5em_0.5em] border-[1.5px] border-foreground/80 bg-[color-mix(in_oklch,var(--background)_92%,var(--foreground))]">
+        <span className="absolute inset-x-[0.15em] top-[0.6em] bottom-[0.5em] bg-foreground/85" style={{ ...CAN_ART, maskSize: "100% 100%" }} />
       </div>
-      <span className="absolute inset-x-0 top-0 h-[1.2em] rounded-[50%] border-[1.5px] border-foreground/80 bg-background" />
-      <span className="absolute top-[0.35em] left-1/2 h-[0.5em] w-[1.4em] -translate-x-1/2 rounded-full border-[1.5px] border-foreground/80" />
-      <span className="absolute inset-x-0 bottom-0 h-[1.2em] rounded-[50%] border-[1.5px] border-foreground/80 bg-background [clip-path:inset(50%_0_0_0)]" />
+      <span className="absolute inset-x-[0.2em] top-0 h-[0.45em] rounded-t-[0.3em] bg-foreground/90" />
     </div>
   );
 }
 
-// The can on the desk: a real cylinder standing on its base. Its body is a ring of narrow
-// vertical strips, each one a flat face turned to point outward, with a letter of the name
-// on the ones facing front. Only the outward faces are drawn.
-const CAN = { radius: 1.8, height: 11, sides: 18, name: "CELSIUS" };
+// The can on the desk: a real can standing on its base, built from the reference profile
+// (radius and height as shares of its diameter, bottom to top). Its body is a ring of narrow
+// faces for each stretch of the profile, each one tilted to follow it and clipped narrower at
+// the narrow end. The artwork wraps the front half of the body. Only outward faces are drawn.
+const CAN = {
+  diameter: 3.4, // em
+  sides: 16,
+  // [bottom radius, bottom height, top radius, top height], shares of the diameter
+  parts: [
+    { name: "foot", from: [0.4, 0], to: [0.5, 0.21] },
+    { name: "body", from: [0.5, 0.21], to: [0.48, 2.57] },
+    { name: "shoulder", from: [0.48, 2.57], to: [0.41, 2.64] },
+    { name: "rim", from: [0.41, 2.64], to: [0.44, 2.7] },
+  ],
+  lid: { radius: 0.4, height: 2.64 },
+};
+
+function CanPart({ part, index }) {
+  const { diameter: d, sides: n } = CAN;
+  const [r1, y1] = part.from.map((v) => v * d);
+  const [r2, y2] = part.to.map((v) => v * d);
+  const lean = (Math.atan2(r1 - r2, y2 - y1) * 180) / Math.PI; // inward is positive
+  const length = Math.hypot(r1 - r2, y2 - y1);
+  const bottom = 2 * r1 * Math.sin(Math.PI / n);
+  const top = (2 * r2 * Math.sin(Math.PI / n)) / bottom;
+  const body = part.name === "body";
+  const rim = part.name === "rim";
+  const front = (n - 8) / 2; // first strip of the front half, facing the viewer at rest
+
+  return Array.from({ length: n }, (_, i) => (
+    <div
+      key={`${part.name}-${i}`}
+      className={cn(
+        "absolute top-0 [backface-visibility:hidden] [transform-origin:50%_0]",
+        rim ? "bg-foreground/90" : "bg-[color-mix(in_oklch,var(--background)_88%,var(--foreground))] text-foreground"
+      )}
+      style={{
+        left: `${-bottom / 2}em`,
+        width: `${bottom + 0.02}em`,
+        height: `${length}em`,
+        clipPath: `polygon(0 0, 100% 0, ${50 + top * 50}% 100%, ${50 - top * 50}% 100%)`,
+        transform: `rotateZ(${(i * 360) / n}deg) translateY(${-r1}em) translateZ(${y1}em) rotateX(${90 - lean}deg)`,
+      }}
+    >
+      {body && i >= front && i < front + 8 && (
+        // The art spans eight faces, each showing its own slice, and is upside down because
+        // the face's top edge is the can's bottom.
+        <span
+          className="absolute inset-0 rotate-180 bg-current"
+          style={{
+            ...CAN_ART,
+            maskSize: `${8 * 100}% 100%`,
+            maskPosition: `${(100 * (front + 7 - i)) / 7}% 0`,
+          }}
+        />
+      )}
+    </div>
+  ));
+}
 
 function StandingCan() {
-  const { radius: r, height: h, sides: n, name } = CAN;
-  const width = 2 * r * Math.sin(Math.PI / n);
+  const { diameter: d, lid } = CAN;
+  const r = lid.radius * d;
+  const rimR = 0.44 * d;
   return (
-    <div className="relative size-[3.6em] [transform-style:preserve-3d]">
+    <div className="relative [transform-style:preserve-3d]" style={{ width: `${d}em`, height: `${d}em` }}>
       <div className="absolute top-1/2 left-1/2 [transform-style:preserve-3d]">
-        {Array.from({ length: n }, (_, i) => {
-          const letter = name[name.length - 1 - (i - (n / 2 - (name.length - 1) / 2))]; // facing front
-          return (
-            <div
-              key={i}
-              className="absolute top-0 grid place-items-center bg-[color-mix(in_oklch,var(--background)_88%,var(--foreground))] font-serif text-[0.75em] font-bold text-foreground/70 [backface-visibility:hidden] [transform-origin:50%_0]"
-              style={{
-                left: `${-width / 2}em`,
-                width: `${width + 0.02}em`,
-                height: `${h}em`,
-                transform: `rotateZ(${(i * 360) / n}deg) translateY(${-r}em) rotateX(90deg)`,
-                backgroundImage:
-                  "linear-gradient(to bottom, currentColor 0 1.5px, transparent 1.5px 12%, color-mix(in oklch, currentColor 60%, transparent) 12% calc(12% + 1px), transparent calc(12% + 1px) calc(88% - 1px), color-mix(in oklch, currentColor 60%, transparent) calc(88% - 1px) 88%, transparent 88% calc(100% - 1.5px), currentColor calc(100% - 1.5px))",
-              }}
-            >
-              {letter && <span className="rotate-180">{letter}</span>}
-            </div>
-          );
-        })}
-        {/* The top: a disc with a rim, a recess, and the pull tab. */}
+        {CAN.parts.map((part, i) => (
+          <CanPart key={part.name} part={part} index={i} />
+        ))}
+        {/* The lid sits below the rim: a recessed disc with a scored opening and a tab above it. */}
         <div
-          className="absolute rounded-full border-[1.5px] border-foreground/80 bg-background [transform-style:preserve-3d]"
-          style={{ left: `${-r}em`, top: `${-r}em`, width: `${2 * r}em`, height: `${2 * r}em`, transform: `translateZ(${h}em)` }}
+          className="absolute rounded-full border-[1.5px] border-foreground/70 bg-[color-mix(in_oklch,var(--background)_80%,var(--foreground))] [transform-style:preserve-3d]"
+          style={{ left: `${-r}em`, top: `${-r}em`, width: `${2 * r}em`, height: `${2 * r}em`, transform: `translateZ(${lid.height * d}em)` }}
         >
-          <span className="absolute inset-[0.35em] rounded-full border border-foreground/50" />
-          <span className="absolute top-[40%] left-1/2 h-[0.9em] w-[1.5em] -translate-x-1/2 rounded-full border-[1.5px] border-foreground/80" />
+          <span className="absolute inset-[0.3em] rounded-full border border-foreground/40" />
+          <span className="absolute top-[55%] left-1/2 size-[1.1em] -translate-x-1/2 rounded-full border border-foreground/60" />
+        </div>
+        <div
+          className="absolute rounded-full border-foreground/90"
+          style={{ left: `${-rimR}em`, top: `${-rimR}em`, width: `${2 * rimR}em`, height: `${2 * rimR}em`, borderWidth: `${0.04 * d}em`, transform: `translateZ(${2.7 * d}em)` }}
+        />
+        <div
+          className="absolute grid place-items-center rounded-[0.3em] border-[1.5px] border-foreground/80 bg-foreground/15"
+          style={{ left: "-0.4em", top: "-1.05em", width: "0.8em", height: "0.95em", transform: `translateZ(${(lid.height + 0.02) * d}em)` }}
+        >
+          <span className="size-[0.35em] rounded-full border border-foreground/70" />
         </div>
       </div>
     </div>

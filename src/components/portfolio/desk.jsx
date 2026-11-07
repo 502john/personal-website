@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { random, scatter } from "@/lib/scatter";
 import { DeskFocus } from "./desk-focus";
 import { DeskItem } from "./desk-item";
+import { THICKNESS } from "./desk-object";
 import { DeskRoom } from "./desk-room";
 
 // At most `max` objects to a row, with the rows as even as possible.
@@ -103,7 +104,10 @@ export function Desk({ items, labels }) {
   const raise = (i) => setStack((s) => [...s.filter((j) => j !== i), i]);
   // Untouched objects keep their order; touched ones go on top, most recent highest.
   const order = [...items.keys()].filter((i) => !stack.includes(i)).concat(stack);
-  const depth = (i) => (order.indexOf(i) + 1) * 2;
+  // Each object rests on the thickness of everything below it, so a thick one never pokes
+  // through a neighbor (thickness is in em, up to 16px each).
+  const depth = (i) =>
+    order.slice(0, order.indexOf(i)).reduce((z, j) => z + 2 + (THICKNESS[items[j].kind] ?? 0) * 16, 2);
 
   // Drag anywhere that isn't an object (desk, floor, wall) to look around.
   const orbitHandlers = {

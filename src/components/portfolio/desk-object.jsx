@@ -275,3 +275,7 @@ export function DeskObject({ item, solid }) {
   const Kind = kinds[item.kind] ?? Note;
   return <Kind item={item} solid={solid} />;
 }
+
+// How thick the flat, rectangular objects are, in em. Objects not listed lie flat (the can
+// already has a body of its own, and the rest aren't rectangles).
+export const THICKNESS = { book: 0.9, polaroid: 0.12, ticket: 0.1, note: 0.1, index: 0.12 };

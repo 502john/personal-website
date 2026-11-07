@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { memo } from "react";
 import { cn } from "@/lib/utils";
 
 // Line-art objects, sized in em so the same drawing works on the desk and in the focus view.
@@ -138,15 +139,16 @@ function IndexCard({ item }) {
   );
 }
 
-// The can's artwork, drawn as a mask so it takes the line color of the theme.
-const CAN_ART = { maskImage: "url(/art/celsius-can.svg)", maskRepeat: "no-repeat" };
+// The can's artwork: black lines on nothing, turned white in the dark theme. A plain background
+// rather than a mask, which is much cheaper to draw on every face of a moving 3D object.
+const CAN_ART = { backgroundImage: "url(/art/celsius-can.svg)", backgroundRepeat: "no-repeat" };
 
 // A can standing upright, seen from the side: used when it's picked up.
 function CanFront() {
   return (
     <div className="relative h-[10.8em] w-[4em]">
       <div className="absolute inset-x-0 top-[0.25em] bottom-[0.15em] rounded-[0.35em_0.35em_0.5em_0.5em] border-[1.5px] border-foreground/80 bg-background">
-        <span className="absolute inset-x-[0.15em] top-[0.6em] bottom-[0.5em] bg-foreground/85" style={{ ...CAN_ART, maskSize: "100% 100%" }} />
+        <span className="absolute inset-x-[0.15em] top-[0.6em] bottom-[0.5em] dark:invert" style={{ ...CAN_ART, backgroundSize: "100% 100%" }} />
       </div>
       <span className="absolute inset-x-[0.2em] top-0 h-[0.45em] rounded-t-[0.3em] bg-foreground/90" />
     </div>
@@ -159,7 +161,8 @@ function CanFront() {
 // the narrow end. The artwork wraps the front half of the body. Only outward faces are drawn.
 const CAN = {
   diameter: 3.4, // em
-  sides: 16,
+  sides: 14,
+  art: 6, // faces the front artwork wraps across
   // [bottom radius, bottom height, top radius, top height], shares of the diameter
   parts: [
     { name: "foot", from: [0.4, 0], to: [0.5, 0.21] },
@@ -174,7 +177,7 @@ const CAN = {
 const shade = (i, n) => 2 + 9 * (0.5 - 0.5 * Math.cos(((i / n) * 2 - 0.7) * Math.PI));
 
 function CanPart({ part, index }) {
-  const { diameter: d, sides: n } = CAN;
+  const { diameter: d, sides: n, art } = CAN;
   const [r1, y1] = part.from.map((v) => v * d);
   const [r2, y2] = part.to.map((v) => v * d);
   const lean = (Math.atan2(r1 - r2, y2 - y1) * 180) / Math.PI; // inward is positive
@@ -183,7 +186,7 @@ function CanPart({ part, index }) {
   const top = (2 * r2 * Math.sin(Math.PI / n)) / bottom;
   const body = part.name === "body";
   const rim = part.name === "rim";
-  const front = (n - 8) / 2; // first strip of the front half, facing the viewer at rest
+  const front = (n - art) / 2; // first strip of the front half, facing the viewer at rest
 
   return Array.from({ length: n }, (_, i) => (
     <div
@@ -199,19 +202,19 @@ function CanPart({ part, index }) {
         left: `${-bottom / 2}em`,
         width: `${bottom + 0.02}em`,
         height: `${length}em`,
-        clipPath: `polygon(0 0, 100% 0, ${50 + top * 50}% 100%, ${50 - top * 50}% 100%)`,
+        clipPath: Math.abs(1 - top) < 0.03 ? undefined : `polygon(0 0, 100% 0, ${50 + top * 50}% 100%, ${50 - top * 50}% 100%)`,
         transform: `rotateZ(${(i * 360) / n}deg) translateY(${-r1}em) translateZ(${y1}em) rotateX(${90 - lean}deg)`,
       }}
     >
-      {body && i >= front && i < front + 8 && (
-        // The art spans eight faces, each showing its own slice, and is upside down because
+      {body && i >= front && i < front + art && (
+        // The art spans a few faces, each showing its own slice, and is upside down because
         // the face's top edge is the can's bottom.
         <span
-          className="absolute inset-0 rotate-180 bg-current"
+          className="absolute inset-0 rotate-180 dark:invert"
           style={{
             ...CAN_ART,
-            maskSize: `${8 * 100}% 100%`,
-            maskPosition: `${(100 * (front + 7 - i)) / 7}% 0`,
+            backgroundSize: `${art * 100}% 100%`,
+            backgroundPosition: `${(100 * (front + art - 1 - i)) / (art - 1)}% 0`,
           }}
         />
       )}
@@ -219,7 +222,7 @@ function CanPart({ part, index }) {
   ));
 }
 
-function StandingCan() {
+const StandingCan = memo(function StandingCan() {
   const { diameter: d, lid } = CAN;
   const r = lid.radius * d;
   const rimR = 0.44 * d;
@@ -250,7 +253,7 @@ function StandingCan() {
       </div>
     </div>
   );
-}
+});
 
 function Can({ solid }) {
   return solid ? <StandingCan /> : <CanFront />;

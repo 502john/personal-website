@@ -114,7 +114,7 @@ export function DeskItem({ item, index, rotate, deskRef, tilt, turn, canDrag, re
               aria-haspopup="dialog"
               // Hidden while picked up, but still focusable so focus can return to it.
               style={{ opacity: picked ? 0 : appear }}
-              className="group block cursor-pointer text-left"
+              className="group block cursor-pointer text-left [transform-style:preserve-3d]"
               onPointerEnter={(e) => e.pointerType === "mouse" && !drag.current && lift.set(14)}
               onPointerLeave={() => !drag.current && lift.set(0)}
               onPointerDown={onPointerDown}
@@ -126,7 +126,7 @@ export function DeskItem({ item, index, rotate, deskRef, tilt, turn, canDrag, re
                 onOpen(buttonRef.current.getBoundingClientRect());
               }}
             >
-              <DeskObject item={item} />
+              <DeskObject item={item} solid />
             </motion.button>
           </motion.div>
         </motion.div>

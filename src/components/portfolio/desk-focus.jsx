@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { ContentLink } from "./content-link";
 import { DeskObject } from "./desk-object";
 import { PhotoStack } from "./photo-stack";
+import { TierList } from "./tier-list";
 
 // open.spotify.com/{playlist|album|track}/<id>, or the embed link Spotify's share menu gives,
 // -> its embeddable player URL.
@@ -65,7 +66,7 @@ export function DeskFocus({ item, origin, labels, reduceMotion, onClosed }) {
           // A player needs more room than text and photos, so its card is wider.
           className={cn(
             "pointer-events-auto [perspective:1400px]",
-            player ? "w-[min(38rem,92vw)]" : "w-[min(28rem,92vw)]"
+            player || item.flavors ? "w-[min(38rem,92vw)]" : "w-[min(28rem,92vw)]"
           )}
           initial={away}
           animate={closing ? away : center}
@@ -102,6 +103,8 @@ export function DeskFocus({ item, origin, labels, reduceMotion, onClosed }) {
               <div className="flex-1 overflow-y-auto px-6 py-5">
                 {item.subtitle && <p className="text-xs text-muted-foreground">{item.subtitle}</p>}
                 <h2 className="font-serif text-xl font-bold">{item.title}</h2>
+
+                {item.flavors && <TierList flavors={item.flavors} labels={labels} />}
 
                 {item.story?.map((paragraph) => (
                   <p key={paragraph} className="mt-3 font-serif text-sm leading-relaxed">

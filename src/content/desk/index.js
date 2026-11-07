@@ -15,7 +15,8 @@
 //
 // Fields
 //   slug      matches the photo folder in public/me/
-//   kind      note, ticket, polaroid, photos, index, record, book, or receipt
+//   kind      note, ticket, polaroid, photos, index, record, book, receipt, or can
+//   flavors   (can only) [{ name, tier }] shown as a tier list on the back; see celsius.js
 //   title     on the object and the back
 //   subtitle  optional second line (event, artist, author, order...)
 //   story     paragraphs on the back
@@ -37,6 +38,7 @@ import { card as cats } from "./cats";
 import { card as pgim } from "./pgim";
 import { card as friends } from "./friends";
 import { card as shpe } from "./shpe";
+import { card as celsius } from "./celsius";
 
 export const desk = [
   doIt,
@@ -53,4 +55,5 @@ export const desk = [
   offTheClock,
   greatMindsInStem,
   cats,
+  celsius,
 ];

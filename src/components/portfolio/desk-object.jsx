@@ -9,7 +9,7 @@ const paper = "border-[1.5px] border-foreground/80 bg-background";
 function Snapshot({ photo }) {
   return (
     <div className="relative size-full overflow-hidden border border-foreground/60 bg-[repeating-linear-gradient(135deg,transparent_0_0.4em,color-mix(in_oklch,var(--foreground)_12%,transparent)_0.4em_0.5em)]">
-      {photo && <Image src={photo.src} alt="" fill sizes="16rem" className="object-cover" />}
+      {photo && <Image src={photo.src} alt="" fill sizes="16rem" draggable={false} className="object-cover select-none" />}
     </div>
   );
 }

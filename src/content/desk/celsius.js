@@ -1,9 +1,11 @@
 // Photos for this object go in public/me/celsius/. Fields are explained in index.js.
 //
-// Celsius can reviews. Every flavor starts under "Not reviewed". To rate one, set its tier
-// to "S", "A", "B", "C", or "D" below. To add proof that you drank it, drop a photo in
-// public/me/celsius/ named after the flavor ("kiwi-guava.jpg"); the flavor then opens it.
+// Celsius can reviews. To rate a flavor, add its name to a tier below. Anything not in a
+// tier shows as "Not reviewed", so a new can only needs adding to the list of cans.
+// To add proof that you drank one, drop a photo in public/me/celsius/ named after the flavor
+// ("kiwi-guava.jpg"); the flavor then opens it.
 
+// Every canned flavor.
 const flavors = [
   "Green Apple Cherry",
   "Fantasy Vibe",
@@ -44,15 +46,26 @@ const flavors = [
   "Essentials Dragonberry",
 ];
 
-// Flavors you've rated; everything else stays "Not reviewed". Name -> tier.
+// Best to worst. Names must match the list above.
 const tiers = {
-  // "Kiwi Guava": "S",
+  S: ["Cherry Cola", "Kiwi Strawberry"],
+  A: [],
+  B: ["Grape Rush", "Arctic Vibe"],
+  C: [],
+  D: [],
 };
+
+const tierOf = new Map(Object.entries(tiers).flatMap(([tier, names]) => names.map((name) => [name, tier])));
+
+// A typo in a tier would silently leave that flavor unrated, so fail loudly instead.
+for (const name of tierOf.keys()) {
+  if (!flavors.includes(name)) throw new Error(`celsius.js: "${name}" is in a tier but not in the list of cans`);
+}
 
 export const card = {
   slug: "celsius",
   kind: "can",
   title: "Celsius reviews",
   subtitle: "every can, ranked",
-  flavors: flavors.map((name) => ({ name, tier: tiers[name] ?? null })),
+  flavors: flavors.map((name) => ({ name, tier: tierOf.get(name) ?? null })),
 };

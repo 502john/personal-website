@@ -3,7 +3,7 @@ import { memo } from "react";
 import { cn } from "@/lib/utils";
 
 // Line-art objects, sized in em so the same drawing works on the desk and in the focus view.
-const paper = "border-[1.5px] border-foreground/80 bg-background";
+const paper = "border-[1.5px] border-foreground/80 bg-background shadow-[0_0.1em_0_0_color-mix(in_oklch,var(--foreground)_55%,transparent)]";
 
 // A photo, or diagonal lines until one is added. The object is a button named by its title,
 // and its photos are described on the back, so here they're decorative.
@@ -276,6 +276,7 @@ export function DeskObject({ item, solid }) {
   return <Kind item={item} solid={solid} />;
 }
 
-// How thick the flat, rectangular objects are, in em. Objects not listed lie flat (the can
-// already has a body of its own, and the rest aren't rectangles).
-export const THICKNESS = { book: 0.9, polaroid: 0.12, ticket: 0.1, note: 0.1, index: 0.12 };
+// Objects thick enough to need real side faces, in em. Paper is only a pixel or two, so it
+// gets a flat edge line instead (see `paper`); walls that thin make the browser's 3D sorting
+// slice through the objects around them.
+export const THICKNESS = { book: 0.9 };

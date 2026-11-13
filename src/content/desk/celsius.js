@@ -29,7 +29,6 @@ const flavors = [
   "Galaxy Vibe",
   "Astro Vibe",
   "Cosmic Vibe",
-  "Cosmic Vibe Fruit Punch",
   "Oasis Vibe",
   "Playa Vibe",
   "Retro Vibe",
@@ -51,7 +50,7 @@ const flavors = [
 const tiers = {
   S: ["Cherry Cola", "Kiwi Strawberry"],
   A: [],
-  B: ["Grape Rush", "Arctic Vibe", "Cosmic Vibe Fruit Punch"],
+  B: ["Grape Rush", "Arctic Vibe", "Cosmic Vibe"],
   C: ["Mango Lemonade", "Fuji Apple Pear"],
   D: [],
 };

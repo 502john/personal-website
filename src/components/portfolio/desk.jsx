@@ -7,6 +7,7 @@ import { DeskFocus } from "./desk-focus";
 import { DeskItem } from "./desk-item";
 import { THICKNESS } from "./desk-object";
 import { DeskRoom } from "./desk-room";
+import { BOARD, WallBoard } from "./wall-board";
 
 // At most `max` objects to a row, with the rows as even as possible.
 const balanced = (max) => (n) => Math.ceil(n / Math.ceil(n / max));
@@ -23,6 +24,8 @@ const LAYOUTS = [
 // Camera: tilt is how far the desk leans away, turn is rotation around the vertical.
 const VIEW = { tilt: 48, turn: -6 };
 const LIMITS = { tilt: [15, 60], turn: [-25, 25] };
+// Facing the board on the back wall: tilted up nearly level, so the desk is a sliver below it.
+const WALL = { tilt: 84, turn: 0 };
 const clamp = (v, [lo, hi]) => Math.min(hi, Math.max(lo, v));
 
 // Phone and desktop scenes are sized in em, so one font size zooms all of each: as large as
@@ -76,18 +79,41 @@ function useFinePointer() {
   );
 }
 
-export function Desk({ items, labels }) {
+export function Desk({ items, labels, wall }) {
   const deskRef = useRef(null);
   const orbit = useRef(null);
   const reduceMotion = useReducedMotion();
   const canDrag = useFinePointer();
   const [stack, setStack] = useState([]); // last touched is on top
   const [focus, setFocus] = useState(null);
+  const [onWall, setOnWall] = useState(false); // facing the board instead of the desk
 
   // The camera starts looking straight down, then settles into the angled view.
   const tilt = useSpring(0, { stiffness: 60, damping: 18 });
   const turn = useSpring(0, { stiffness: 60, damping: 18 });
-  const transform = useMotionTemplate`translateY(-50%) rotateX(${tilt}deg) rotateZ(${turn}deg)`;
+  // Turning to the wall also slides the scene, in its own coordinates, so the board's center
+  // lands where the desk's center was: half the desk plus the gap back to the wall, and up to
+  // the board's height, then a little closer, and the whole view rises a little so the board
+  // sits nearer the top of the screen. `look` runs from 0 (the desk) to 1 (the wall).
+  const look = useSpring(0, { stiffness: 60, damping: 18 });
+  const transform = useMotionTemplate`translateY(-50%) translateY(calc(${look} * -10em)) rotateX(${tilt}deg) rotateZ(${turn}deg) translate3d(0, calc(${look} * (50% + ${BOARD.center.behind + BOARD.center.closer}em)), calc(${look} * ${-BOARD.center.up}em))`;
+
+  const lookAt = (toWall) => {
+    const view = toWall ? WALL : VIEW;
+    const go = (value, to) => (reduceMotion ? value.jump(to) : value.set(to));
+    go(tilt, view.tilt);
+    go(turn, view.turn);
+    go(look, toWall ? 1 : 0);
+    setOnWall(toWall);
+  };
+
+  // Escape turns back to the desk, unless a note or object is open (its dialog handles Escape).
+  useEffect(() => {
+    if (!onWall || focus) return;
+    const onKey = (e) => e.key === "Escape" && lookAt(false);
+    addEventListener("keydown", onKey);
+    return () => removeEventListener("keydown", onKey);
+  });
 
   useEffect(() => {
     if (reduceMotion) {
@@ -112,7 +138,7 @@ export function Desk({ items, labels }) {
   // Drag anywhere that isn't an object (desk, floor, wall) to look around.
   const orbitHandlers = {
     onPointerDown: (e) => {
-      if (e.target.closest("[data-slot]") || e.pointerType !== "mouse") return;
+      if (onWall || e.target.closest("[data-slot]") || e.pointerType !== "mouse") return;
       e.currentTarget.setPointerCapture(e.pointerId);
       orbit.current = { px: e.clientX, py: e.clientY, tilt: tilt.get(), turn: turn.get() };
     },
@@ -147,6 +173,20 @@ export function Desk({ items, labels }) {
           className="absolute inset-x-0 top-1/2 h-[var(--h0)] rounded-[0.2em] border-[1.5px] border-foreground/70 bg-background bg-[radial-gradient(var(--border)_1px,transparent_1px)] [background-size:1em_1em] select-none [transform-style:preserve-3d] pointer-fine:cursor-grab pointer-fine:active:cursor-grabbing sm:h-[var(--h1)] sm:text-[14px] sm:[background-size:16px_16px] lg:h-[var(--h2)] lg:text-[1em] lg:[background-size:1em_1em]"
         >
           <DeskRoom />
+          <WallBoard
+            notes={wall.notes}
+            label={wall.label}
+            active={onWall}
+            onLook={() => lookAt(true)}
+            onOpen={(note, rect) =>
+              setFocus({
+                note: { kind: "note", ...note },
+                rotate: 0,
+                dx: rect.left + rect.width / 2 - innerWidth / 2,
+                dy: rect.top + rect.height / 2 - innerHeight / 2,
+              })
+            }
+          />
           {items.map((item, i) => {
             const rotate = (random(i + 1) - 0.5) * 24;
             const spots = Object.fromEntries(
@@ -189,12 +229,22 @@ export function Desk({ items, labels }) {
             );
           })}
         </motion.div>
+
+        {onWall && (
+          <button
+            type="button"
+            onClick={() => lookAt(false)}
+            className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs text-muted-foreground hover:text-foreground"
+          >
+            ← {wall.back}
+          </button>
+        )}
       </div>
 
       {focus && (
         <DeskFocus
-          key={focus.index}
-          item={items[focus.index]}
+          key={focus.note?.title ?? focus.index}
+          item={focus.note ?? items[focus.index]}
           origin={focus}
           labels={labels}
           reduceMotion={reduceMotion}

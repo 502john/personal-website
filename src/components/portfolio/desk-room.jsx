@@ -42,7 +42,7 @@ export function DeskRoom() {
         style={{ top: `calc(-${BEHIND} - ${WALL})`, height: WALL, transform: `translateZ(${FLOOR_Z}) rotateX(-90deg)` }}
       >
         <div className={`absolute inset-x-0 bottom-[1.2em] border-t ${faint}`} />
-        <div className={`absolute top-[5em] left-[60%] h-[9em] w-[7em] border ${faint}`}>
+        <div className={`absolute top-[5em] left-[70%] h-[9em] w-[7em] border ${faint}`}>
           <div className={`absolute inset-y-0 left-1/2 border-l ${faint}`} />
           <div className={`absolute inset-x-0 top-1/2 border-t ${faint}`} />
         </div>

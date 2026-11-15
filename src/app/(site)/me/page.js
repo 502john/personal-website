@@ -1,6 +1,7 @@
 import { Container } from "@/components/portfolio/container";
 import { Desk } from "@/components/portfolio/desk";
 import { desk } from "@/content/desk";
+import { wall } from "@/content/wall";
 import { site } from "@/content/site";
 import { visible } from "@/lib/content";
 import { deskPhotos, deskVideos } from "@/lib/desk-photos";
@@ -36,7 +37,7 @@ export default function MePage() {
             {site.me.hint} <span className="hidden pointer-fine:inline">{site.me.orbitHint}</span>
           </p>
         </header>
-        <Desk items={items} labels={site.labels} />
+        <Desk items={items} labels={site.labels} wall={{ ...wall, notes: visible(wall.notes) }} />
       </Container>
     </div>
   );

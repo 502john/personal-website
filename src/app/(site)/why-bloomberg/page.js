@@ -1,29 +1,104 @@
+import { Chapters } from "@/components/portfolio/chapters";
+import { ContentLink } from "@/components/portfolio/content-link";
 import { Container } from "@/components/portfolio/container";
+import { DeskShelf, Preparation } from "@/components/why-bloomberg/shelf";
 import { Temple } from "@/components/why-bloomberg/temple";
+import { desk } from "@/content/desk";
+import { experience } from "@/content/experience";
 import { site } from "@/content/site";
-import { whyBloomberg } from "@/content/why-bloomberg";
-import { folderPhotos, folderVideos } from "@/lib/desk-photos";
+import { whyBloomberg as page } from "@/content/why-bloomberg";
+import { deskPhotos, deskVideos, folderPhotos, folderVideos } from "@/lib/desk-photos";
+import { withSizes } from "@/lib/image-size";
 import { pageMetadata } from "@/lib/metadata";
 
 // Not linked from anywhere, and kept out of search results, so only people with the link see it.
 export const metadata = {
-  ...pageMetadata({ title: `${whyBloomberg.title} | ${site.name}`, description: whyBloomberg.hint }),
+  ...pageMetadata({ title: `Why Bloomberg | ${site.name}`, description: page.intro[0] }),
   robots: { index: false, follow: false },
 };
 
-export default function WhyBloombergPage() {
+const entries = (slugs = []) =>
+  experience.filter((e) => slugs.includes(e.slug)).map((e) => ({ ...e, photos: withSizes(e.photos) }));
+
+const deskItems = (slugs = []) =>
+  slugs
+    .map((slug) => desk.find((card) => card.slug === slug))
+    .filter(Boolean)
+    .map((card) => ({ ...card, photos: deskPhotos(card.slug), videos: deskVideos(card.slug) }));
+
+// One part's panel: its name, the line connecting the dots, then the evidence from the site.
+function Panel({ part, children }) {
   return (
-    <Container className="max-w-4xl pt-20 pb-32">
-      <header className="mb-10 text-center">
-        <h1 className="font-serif text-2xl font-bold">{whyBloomberg.title}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">{whyBloomberg.hint}</p>
+    <div>
+      <h2 className="text-xs tracking-[0.2em] text-muted-foreground uppercase">{part.label}</h2>
+      <p className="mt-3 font-serif text-lg leading-relaxed">{part.line}</p>
+      {children}
+      {part.experience?.length > 0 && (
+        <div className="mt-8">
+          <Chapters entries={entries(part.experience)} labels={site.labels} />
+        </div>
+      )}
+      {part.desk?.length > 0 && (
+        <div className="mt-8">
+          <DeskShelf items={deskItems(part.desk)} labels={site.labels} />
+        </div>
+      )}
+      {part.links?.length > 0 && (
+        <ul className="mt-6 space-y-1 text-sm text-muted-foreground">
+          {part.links.map((link) => (
+            <li key={link.href}>
+              <ContentLink href={link.href}>{link.label}</ContentLink>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+export default function WhyBloombergPage() {
+  const photos = folderPhotos("why-bloomberg");
+  const videos = folderVideos("why-bloomberg");
+  const [data, impact, culture] = page.pillars;
+
+  const panels = {
+    intro: (
+      <div className="space-y-3 font-serif text-lg leading-relaxed">
+        {page.intro.map((p) => (
+          <p key={p}>{p}</p>
+        ))}
+      </div>
+    ),
+    whyMe: <Panel part={page.whyMe} />,
+    preparation: (
+      <Panel part={page.preparation}>
+        <Preparation photos={photos} videos={videos} labels={site.labels} title={page.preparation.label} />
+      </Panel>
+    ),
+    whyBloomberg: (
+      <Panel part={page.whyBloomberg}>
+        <ul className="mt-6 divide-y divide-dotted">
+          {page.pillars.map((pillar) => (
+            <li key={pillar.label} className="py-4 first:pt-0">
+              <p className="font-serif font-bold">{pillar.label}</p>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{pillar.line}</p>
+            </li>
+          ))}
+        </ul>
+      </Panel>
+    ),
+    data: <Panel part={data} />,
+    impact: <Panel part={impact} />,
+    culture: <Panel part={culture} />,
+  };
+
+  return (
+    <Container className="max-w-6xl pt-16 pb-32">
+      <header className="mb-12 text-center">
+        <h1 className="font-serif text-3xl font-bold sm:text-5xl">{page.title}</h1>
+        <p className="mt-3 text-sm text-muted-foreground">{page.hint}</p>
       </header>
-      <Temple
-        content={whyBloomberg}
-        photos={folderPhotos("why-bloomberg")}
-        videos={folderVideos("why-bloomberg")}
-        labels={site.labels}
-      />
+      <Temple content={page} panels={panels} media={[...photos, ...videos.map((v) => ({ ...v, video: true }))]} />
     </Container>
   );
 }

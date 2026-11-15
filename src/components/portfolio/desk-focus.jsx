@@ -112,6 +112,14 @@ export function DeskFocus({ item, origin, labels, reduceMotion, onClosed }) {
                   </p>
                 ))}
 
+                {item.status && (
+                  <p className="mt-4">
+                    <span className="rounded-md border border-dotted px-1.5 py-0.5 text-xs text-muted-foreground">
+                      {item.status}
+                    </span>
+                  </p>
+                )}
+
                 {item.photos?.length > 0 && (
                   <PhotoStack photos={item.photos} title={item.title} labels={labels} reduceMotion={reduceMotion} />
                 )}

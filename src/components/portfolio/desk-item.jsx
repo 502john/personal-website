@@ -136,6 +136,7 @@ export function DeskItem({ item, index, rotate, deskRef, tilt, turn, canDrag, re
               ref={buttonRef}
               type="button"
               aria-haspopup="dialog"
+              aria-label={item.title}
               // Hidden while picked up, but still focusable so focus can return to it.
               style={{ opacity: picked ? 0 : appear }}
               className="group block cursor-pointer text-left [transform-style:preserve-3d]"

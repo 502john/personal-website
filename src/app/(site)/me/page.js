@@ -1,9 +1,10 @@
 import { Container } from "@/components/portfolio/container";
 import { Desk } from "@/components/portfolio/desk";
 import { desk } from "@/content/desk";
+import { wall } from "@/content/wall";
 import { site } from "@/content/site";
 import { visible } from "@/lib/content";
-import { deskPhotos, deskVideos } from "@/lib/desk-photos";
+import { deskPhotos, deskVideos, folderPhotos } from "@/lib/desk-photos";
 import { pageMetadata } from "@/lib/metadata";
 
 const slugify = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -36,7 +37,7 @@ export default function MePage() {
             {site.me.hint} <span className="hidden pointer-fine:inline">{site.me.orbitHint}</span>
           </p>
         </header>
-        <Desk items={items} labels={site.labels} />
+        <Desk items={items} labels={site.labels} wall={{ ...wall, notes: visible(wall.notes).map((note) => ({ ...note, photos: folderPhotos(`wall/${note.slug}`) })) }} />
       </Container>
     </div>
   );

@@ -20,7 +20,8 @@ export const whyBloomberg = {
   title: "Why Bloomberg?",
   hint: "Point at any part of the temple.",
   intro: [
-    "Two questions, built like a temple. Why Bloomberg is the foundation, the three reasons it's where I want to grow. Why me rests on top, what I'd bring and how I got ready.",
+    "Two questions, built like a temple.",
+    "Why Bloomberg is the foundation, the three reasons it's where I want to grow. Why me rests on top, what I'd bring and how I got ready.",
   ],
 
   whyMe: {

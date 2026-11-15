@@ -13,7 +13,7 @@ import { pageMetadata } from "@/lib/metadata";
 
 // Not linked from anywhere, and kept out of search results, so only people with the link see it.
 export const metadata = {
-  ...pageMetadata({ title: `Why Bloomberg | ${site.name}`, description: page.intro[0] }),
+  ...pageMetadata({ title: `Why Bloomberg | ${site.name}`, description: page.intro.join(" ") }),
   robots: { index: false, follow: false },
 };
 

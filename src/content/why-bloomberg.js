@@ -13,7 +13,7 @@
 //   desk         slugs from content/desk/, shown as the desk objects (tap to flip)
 //   links        [{ label, href }]
 //
-// Preparation photos and videos go in public/why-bloomberg/, sorted and captioned by file name
+// Road to Bloomberg photos and videos go in public/why-bloomberg/, sorted and captioned by file name
 // as on the desk. They show through the band under the roof.
 
 export const whyBloomberg = {
@@ -31,8 +31,8 @@ export const whyBloomberg = {
   },
 
   preparation: {
-    label: "How I prepared",
-    line: "Events, conversations with engineers, and practice along the way.",
+    label: "Road to Bloomberg",
+    line: "The events, the conversations, and the late nights studying for this interview.",
   },
 
   whyBloomberg: {

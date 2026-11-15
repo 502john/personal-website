@@ -34,8 +34,8 @@ const readHash = () => decodeURIComponent(location.hash.slice(1));
 
 // Which pieces belong to the part being pointed at. Everything else fades back.
 const PARTS = {
-  whyMe: ["pediment", "cornice", "frieze", "architrave"],
-  preparation: ["frieze"],
+  whyMe: ["pediment", "cornice"],
+  preparation: ["frieze", "architrave"],
   whyBloomberg: ["steps", ...PILLARS],
 };
 const lights = (part, piece) => !part || part === piece || PARTS[part]?.includes(piece);
@@ -43,11 +43,14 @@ const lights = (part, piece) => !part || part === piece || PARTS[part]?.includes
 // The band under the roof: grooves and square openings, with the preparation photos and videos
 // showing through. It drifts slowly sideways (two copies of the tiles make a seamless loop).
 function Frieze({ media, moving }) {
-  const { tileWidth, height } = TEMPLE.frieze;
-  const count = Math.ceil(TEMPLE.frieze.width / tileWidth) + 1;
-  const tiles = Array.from({ length: Math.max(count, media.length) }, (_, i) => media[i % media.length]);
+  const { height } = TEMPLE.frieze;
+  // A whole number of tiles fills the band exactly, so no cut-off groove shows at its edge.
+  const fit = Math.round(TEMPLE.frieze.width / TEMPLE.frieze.tileWidth);
+  const tileWidth = TEMPLE.frieze.width / fit;
+  const tiles = Array.from({ length: Math.max(fit, media.length) }, (_, i) => media[i % media.length]);
   const m = TEMPLE.metope;
-  const opening = { left: pct(m.x, tileWidth), top: pct(m.y, height), width: pct(m.width, tileWidth), height: pct(m.height, height) };
+  const art = TEMPLE.frieze.tileWidth; // the drawing's tile width, which stretches to fit
+  const opening = { left: pct(m.x, art), top: pct(m.y, height), width: pct(m.width, art), height: pct(m.height, height) };
 
   return (
     <div
@@ -69,7 +72,7 @@ function Frieze({ media, moving }) {
                 )}
               </span>
             )}
-            <FriezeTile className={cn(drawn, "inset-0 size-full")} style={delay(DRAW.frieze)} />
+            <FriezeTile preserveAspectRatio="none" className={cn(drawn, "inset-0 size-full")} style={delay(DRAW.frieze)} />
           </div>
         ))
       )}
@@ -131,7 +134,8 @@ export function Temple({ content, panels, media }) {
   };
 
   const { pediment, cornice, frieze, architrave, columns, steps } = TEMPLE;
-  const topEnd = architrave.y + architrave.height;
+  const roofEnd = cornice.y + cornice.height;
+  const beamEnd = architrave.y + architrave.height;
   const bottomEnd = steps.y + steps.height;
 
   return (
@@ -160,8 +164,9 @@ export function Temple({ content, panels, media }) {
           <motion.p
             {...fadeIn}
             aria-hidden="true"
-            className={cn("pointer-events-none absolute flex items-center justify-center pt-[1.2%] font-serif text-[max(9px,2cqw)] tracking-[0.3em] uppercase", fade("architrave"))}
-            style={place(architrave)}
+            className={cn("pointer-events-none absolute flex items-center justify-center font-serif text-[max(9px,2cqw)] tracking-[0.3em] uppercase", fade("architrave"))}
+            // The band below the beam's line, so the line never touches the letters.
+            style={place({ ...architrave, y: architrave.y + architrave.height / 3, height: (architrave.height * 2) / 3 })}
           >
             {content.preparation.label}
           </motion.p>
@@ -203,7 +208,7 @@ export function Temple({ content, panels, media }) {
         <div className="relative ml-3 w-24 shrink-0 sm:ml-4 sm:w-28">
           <Bracket
             from={pediment.y}
-            to={topEnd - 8}
+            to={roofEnd}
             label={content.whyMe.label}
             part="whyMe"
             lit={lights(part, "pediment")}
@@ -211,7 +216,7 @@ export function Temple({ content, panels, media }) {
             onPick={pick}
           />
           <Bracket
-            from={topEnd + 8}
+            from={beamEnd + 8}
             to={bottomEnd}
             label={content.whyBloomberg.label}
             part="whyBloomberg"

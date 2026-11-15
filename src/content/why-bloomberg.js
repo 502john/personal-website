@@ -28,7 +28,6 @@ export const whyBloomberg = {
     label: "Why me to Bloomberg",
     line: "I turn research into something people can rely on. Clear requirements, deliberate trade-offs, and work clean enough that every answer holds up.",
     experience: ["lijing-wang-lab", "ai-imaging-medicine-lab"],
-    links: [{ label: "Tether, a team project I led", href: "/projects/tether" }],
   },
 
   preparation: {

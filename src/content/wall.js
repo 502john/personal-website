@@ -2,6 +2,7 @@
 // Tapping the board turns the camera to face it, and tapping a note opens it like a desk object.
 //
 // Fields for each note
+//   slug    names its photo folder, public/wall/<slug>/ (photos show on the back, as on the desk)
 //   title   on the note and the back
 //   story   paragraphs on the back
 //   hidden  true to keep it here without showing it
@@ -11,10 +12,12 @@ export const wall = {
   back: "Back to the desk",
   notes: [
     {
+      slug: "eggs-in-one-basket",
       title: "Don't put all your eggs in one basket",
       story: ["I agree, and I refuse. Passion often takes intensity."],
     },
     {
+      slug: "intuitive-learning",
       title: "Intuitive learning as LoRA adapters",
       story: [
         "Learning is getting the big picture. The details matter far less than the lesson.",

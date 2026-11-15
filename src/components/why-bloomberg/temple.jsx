@@ -1,212 +1,240 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion } from "motion/react";
-import { useState } from "react";
-import { DeskFocus } from "@/components/portfolio/desk-focus";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useState, useSyncExternalStore } from "react";
 import { cn } from "@/lib/utils";
 import { Architrave, Column, Cornice, FriezeTile, Pediment, Steps, TEMPLE } from "./temple-art";
 
 // The temple is laid out in the art's own coordinates, as shares of its box, so it scales as
-// one drawing. Text is sized in cqw (shares of the temple's width) for the same reason.
+// one drawing. Text on it is sized in cqw (shares of its width) for the same reason.
 const W = TEMPLE.width;
 const H = TEMPLE.height;
+const pct = (v, of) => `${(v / of) * 100}%`;
 const place = ({ x, y, width, height }) => ({
-  left: `${(x / W) * 100}%`,
-  top: `${(y / H) * 100}%`,
-  width: `${(width / W) * 100}%`,
-  height: `${(height / H) * 100}%`,
+  left: pct(x, W),
+  top: pct(y, H),
+  width: pct(width, W),
+  height: pct(height, H),
 });
 
 // Each piece draws itself in like a pen sketch, from the ground up.
-const DRAW = {
-  steps: 0,
-  columns: [0.35, 0.5, 0.65],
-  architrave: 1,
-  frieze: 1.2,
-  cornice: 1.35,
-  pediment: 1.5,
-  text: 2.1,
-};
+const DRAW = { steps: 0, columns: [0.3, 0.45, 0.6], architrave: 0.9, frieze: 1.05, cornice: 1.2, pediment: 1.35, text: 1.9 };
 const drawn = "absolute [&_path]:[stroke-dasharray:1] [&_path]:animate-draw motion-reduce:[&_path]:animate-none";
 const delay = (seconds) => ({ "--delay": `${seconds}s` });
 
-// The frieze under the roof: tiles of carved grooves and square openings, with the
-// preparation photos and videos showing through the openings. It drifts slowly sideways
-// (two copies of the tiles, so the loop is seamless) and stops while pointed at or focused.
-function Frieze({ media, reduceMotion, onOpen }) {
-  const { tileWidth, width } = TEMPLE.frieze;
-  const count = Math.max(width / tileWidth, media.length);
-  const tiles = Array.from({ length: count }, (_, i) => media[i % media.length]);
-  const moving = media.length > 0 && !reduceMotion;
+const PILLARS = ["data", "impact", "culture"];
+
+// The picked part lives in the link (/why-bloomberg#impact), so an email can point straight at it.
+const onHash = (callback) => {
+  addEventListener("hashchange", callback);
+  return () => removeEventListener("hashchange", callback);
+};
+const readHash = () => decodeURIComponent(location.hash.slice(1));
+
+// Which pieces belong to the part being pointed at. Everything else fades back.
+const PARTS = {
+  whyMe: ["pediment", "cornice", "frieze", "architrave"],
+  preparation: ["frieze"],
+  whyBloomberg: ["steps", ...PILLARS],
+};
+const lights = (part, piece) => !part || part === piece || PARTS[part]?.includes(piece);
+
+// The band under the roof: grooves and square openings, with the preparation photos and videos
+// showing through. It drifts slowly sideways (two copies of the tiles make a seamless loop).
+function Frieze({ media, moving }) {
+  const { tileWidth, height } = TEMPLE.frieze;
+  const count = Math.ceil(TEMPLE.frieze.width / tileWidth) + 1;
+  const tiles = Array.from({ length: Math.max(count, media.length) }, (_, i) => media[i % media.length]);
   const m = TEMPLE.metope;
-  const opening = {
-    left: `${(m.x / tileWidth) * 100}%`,
-    top: `${(m.y / TEMPLE.frieze.height) * 100}%`,
-    width: `${(m.width / tileWidth) * 100}%`,
-    height: `${(m.height / TEMPLE.frieze.height) * 100}%`,
-  };
+  const opening = { left: pct(m.x, tileWidth), top: pct(m.y, height), width: pct(m.width, tileWidth), height: pct(m.height, height) };
 
   return (
     <div
-      className="absolute overflow-hidden border-x-[1.5px] border-current"
-      style={{ ...place(TEMPLE.frieze), ...delay(DRAW.frieze) }}
+      className={cn(
+        "flex h-full w-max",
+        moving && "animate-[frieze_var(--loop)_linear_infinite] group-hover:[animation-play-state:paused] group-focus-visible:[animation-play-state:paused]"
+      )}
+      style={{ "--loop": `${tiles.length * 4}s` }}
     >
-      <div
-        className={cn(
-          "flex h-full w-max",
-          moving && "animate-[frieze_var(--loop)_linear_infinite] hover:[animation-play-state:paused] has-focus-visible:[animation-play-state:paused]"
-        )}
-        style={{ "--loop": `${count * 4}s` }}
-      >
-        {[0, 1].map((copy) =>
-          tiles.map((item, i) => {
-            const Tile = item ? "button" : "div";
-            return (
-              <Tile
-                key={`${copy}-${i}`}
-                {...(item && {
-                  type: "button",
-                  "aria-label": item.alt || `Preparation ${i + 1}`,
-                  onClick: (e) => onOpen(e.currentTarget),
-                })}
-                // The second copy only fills the loop, so it stays out of the tab order.
-                {...(copy === 1 && { "aria-hidden": true, tabIndex: -1 })}
-                className={cn("relative h-full shrink-0", item && "cursor-pointer")}
-                style={{ width: `${(tileWidth / W) * 100}cqw` }}
-              >
-                {item && (
-                  <span className="absolute overflow-hidden" style={opening}>
-                    {item.video ? (
-                      <video src={`${item.src}#t=0.1`} muted playsInline preload="metadata" className="size-full object-cover" />
-                    ) : (
-                      <Image src={item.src} alt="" fill sizes="8rem" draggable={false} className="object-cover" />
-                    )}
-                  </span>
+      {[0, 1].map((copy) =>
+        tiles.map((item, i) => (
+          <div key={`${copy}-${i}`} className="relative h-full shrink-0" style={{ width: `${(tileWidth / W) * 100}cqw` }}>
+            {item && (
+              <span className="absolute overflow-hidden" style={opening}>
+                {item.video ? (
+                  <video src={`${item.src}#t=0.1`} muted playsInline preload="metadata" className="size-full object-cover" />
+                ) : (
+                  <Image src={item.src} alt="" fill sizes="6rem" draggable={false} className="object-cover" />
                 )}
-                <FriezeTile className={cn(drawn, "inset-0 size-full")} style={delay(DRAW.frieze)} />
-              </Tile>
-            );
-          })
-        )}
-      </div>
+              </span>
+            )}
+            <FriezeTile className={cn(drawn, "inset-0 size-full")} style={delay(DRAW.frieze)} />
+          </div>
+        ))
+      )}
     </div>
   );
 }
 
-export function Temple({ content, photos, videos, labels }) {
-  const reduceMotion = useReducedMotion();
-  const [active, setActive] = useState(null); // the column being pointed at or focused
-  const [focus, setFocus] = useState(null);
-  const media = [...photos, ...videos.map((v) => ({ ...v, video: true }))];
+// A bracket down the temple's right side, with the part's name beside it.
+function Bracket({ from, to, label, part, lit, onPoint, onPick }) {
+  return (
+    <button
+      type="button"
+      onPointerEnter={() => onPoint(part)}
+      onPointerLeave={() => onPoint(null)}
+      onFocus={() => onPoint(part)}
+      onBlur={() => onPoint(null)}
+      onClick={() => onPick(part)}
+      className={cn(
+        "absolute inset-x-0 flex cursor-pointer items-center gap-2.5 text-left transition-opacity duration-300",
+        !lit && "opacity-30"
+      )}
+      style={{ top: pct(from, H), height: pct(to - from, H) }}
+    >
+      <span aria-hidden="true" className="h-full w-2.5 shrink-0 rounded-r-sm border-y-[1.5px] border-r-[1.5px] border-current" />
+      <span className="font-serif text-sm leading-snug italic sm:text-base">{label}</span>
+    </button>
+  );
+}
 
-  const open = (item, target) => {
-    const rect = target.getBoundingClientRect();
-    setActive(null);
-    setFocus({
-      item,
-      origin: {
-        rotate: 0,
-        dx: rect.left + rect.width / 2 - innerWidth / 2,
-        dy: rect.top + rect.height / 2 - innerHeight / 2,
-      },
-    });
+export function Temple({ content, panels, media }) {
+  const reduceMotion = useReducedMotion();
+  const [pointed, setPointed] = useState(null);
+  const hash = useSyncExternalStore(onHash, readHash, () => "");
+  const picked = panels[hash] ? hash : "intro";
+  const part = pointed;
+
+  const pick = (next) => {
+    history.replaceState(null, "", `#${next}`);
+    dispatchEvent(new HashChangeEvent("hashchange"));
+    // On narrow screens the panel is below the temple, so bring it into view.
+    if (innerWidth < 1024) document.getElementById("why-panel")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
   };
 
-  const card = (part) => ({ kind: "note", title: part.title, story: part.story, links: part.links });
-  const preparation = { kind: "photos", title: content.preparation, photos, videos };
+  // Props for a piece of the temple that can be pointed at and picked.
+  const handles = (name) => ({
+    type: "button",
+    "aria-pressed": picked === name,
+    onPointerEnter: () => setPointed(name),
+    onPointerLeave: () => setPointed(null),
+    onFocus: () => setPointed(name),
+    onBlur: () => setPointed(null),
+    onClick: () => pick(name),
+  });
+  const fade = (piece) => cn("transition-opacity duration-300 motion-reduce:transition-none", !lights(part, piece) && "opacity-30");
   const fadeIn = {
     initial: reduceMotion ? false : { opacity: 0 },
     animate: { opacity: 1 },
     transition: { duration: 0.6, delay: reduceMotion ? 0 : DRAW.text },
   };
 
-  return (
-    <>
-      <div className="relative w-full text-foreground/85 [container-type:inline-size]" style={{ aspectRatio: `${W} / ${H}` }}>
-        <Steps className={drawn} style={{ ...place(TEMPLE.steps), ...delay(DRAW.steps) }} />
+  const { pediment, cornice, frieze, architrave, columns, steps } = TEMPLE;
+  const topEnd = architrave.y + architrave.height;
+  const bottomEnd = steps.y + steps.height;
 
-        {TEMPLE.columns.map((box, i) => {
-          const pillar = content.pillars[i];
-          return (
+  return (
+    <div className="lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-start lg:gap-16">
+      <div className="mx-auto flex w-full max-w-xl text-foreground/85">
+        <div className="relative flex-1 [container-type:inline-size]" style={{ aspectRatio: `${W} / ${H}` }}>
+          <Steps className={cn(drawn, fade("steps"))} style={{ ...place(steps), ...delay(DRAW.steps) }} />
+
+          {columns.map((box, i) => (
             <button
-              key={pillar.label}
-              type="button"
-              aria-haspopup="dialog"
-              aria-label={pillar.title}
-              onPointerEnter={() => setActive(i)}
-              onPointerLeave={() => setActive(null)}
-              onFocus={() => setActive(i)}
-              onBlur={() => setActive(null)}
-              onClick={(e) => open(card(pillar), e.currentTarget)}
-              className={cn(
-                "absolute cursor-pointer transition duration-300 motion-reduce:transition-none",
-                active === i && "-translate-y-[1.5%] text-foreground",
-                active !== null && active !== i && "opacity-35"
-              )}
+              key={PILLARS[i]}
+              {...handles(PILLARS[i])}
+              aria-label={content.pillars[i].label}
+              className={cn("absolute cursor-pointer", fade(PILLARS[i]))}
               style={place(box)}
             >
-              <Column className={cn(drawn, "inset-0 size-full")} style={delay(DRAW.columns[i])} />
+              <Column
+                className={cn(drawn, "inset-0 size-full transition-transform duration-300", part === PILLARS[i] && "-translate-y-[1.5%]")}
+                style={delay(DRAW.columns[i])}
+              />
             </button>
-          );
-        })}
+          ))}
 
-        <Architrave className={drawn} style={{ ...place(TEMPLE.architrave), ...delay(DRAW.architrave) }} />
-        <motion.p
-          {...fadeIn}
-          className="absolute flex items-center justify-center font-serif text-[max(9px,1.9cqw)] tracking-[0.3em] uppercase"
-          style={place(TEMPLE.inscription)}
-        >
-          {content.inscription}
-        </motion.p>
-
-        <Frieze media={media} reduceMotion={reduceMotion} onOpen={(target) => open(preparation, target)} />
-        <Cornice className={drawn} style={{ ...place(TEMPLE.cornice), ...delay(DRAW.cornice) }} />
-
-        {/* The roof is why me, resting on the pillars. Clipped to its triangle so only the roof opens it. */}
-        <button
-          type="button"
-          aria-haspopup="dialog"
-          aria-label={content.whyMe.title}
-          onClick={(e) => open(card(content.whyMe), e.currentTarget)}
-          className="group absolute cursor-pointer [clip-path:polygon(0_100%,50%_0,100%_100%)]"
-          style={place(TEMPLE.pediment)}
-        >
-          <Pediment className={cn(drawn, "inset-0 size-full")} style={delay(DRAW.pediment)} />
-          <motion.span
-            {...fadeIn}
-            className="absolute inset-x-0 bottom-[18%] text-center font-serif text-[max(11px,2.4cqw)] italic group-hover:text-foreground"
-          >
-            {content.whyMe.label}
-          </motion.span>
-        </button>
-
-        {/* The pillars' names, below the steps. */}
-        {TEMPLE.columnCenters.map((x, i) => (
-          <motion.span
-            key={x}
+          <Architrave className={cn(drawn, fade("architrave"))} style={{ ...place(architrave), ...delay(DRAW.architrave) }} />
+          {/* The beam names the band of photos above it. */}
+          <motion.p
             {...fadeIn}
             aria-hidden="true"
-            className={cn(
-              "absolute -translate-x-1/2 font-serif text-[max(11px,1.8cqw)] italic transition-opacity duration-300",
-              active !== null && active !== i && "opacity-35"
-            )}
-            style={{ left: `${(x / W) * 100}%`, top: `${((TEMPLE.steps.y + TEMPLE.steps.height + 6) / H) * 100}%` }}
+            className={cn("pointer-events-none absolute flex items-center justify-center pt-[1.2%] font-serif text-[max(9px,2cqw)] tracking-[0.3em] uppercase", fade("architrave"))}
+            style={place(architrave)}
           >
-            {content.pillars[i].label}
-          </motion.span>
-        ))}
+            {content.preparation.label}
+          </motion.p>
+
+          <button
+            {...handles("preparation")}
+            aria-label={content.preparation.label}
+            className={cn("group absolute cursor-pointer overflow-hidden border-x-[1.5px] border-current", fade("frieze"))}
+            style={place(frieze)}
+          >
+            <Frieze media={media} moving={media.length > 0 && !reduceMotion} />
+          </button>
+
+          <Cornice className={cn(drawn, fade("cornice"))} style={{ ...place(cornice), ...delay(DRAW.cornice) }} />
+
+          <button
+            {...handles("whyMe")}
+            aria-label={content.whyMe.label}
+            className={cn("absolute cursor-pointer [clip-path:polygon(0_100%,50%_0,100%_100%)]", fade("pediment"))}
+            style={place(pediment)}
+          >
+            <Pediment className={cn(drawn, "inset-0 size-full")} style={delay(DRAW.pediment)} />
+          </button>
+
+          {/* The pillars' names, under the steps. */}
+          {TEMPLE.columnCenters.map((x, i) => (
+            <motion.span
+              key={x}
+              {...fadeIn}
+              aria-hidden="true"
+              className={cn("absolute -translate-x-1/2 pt-2 font-serif text-[max(12px,2.6cqw)] italic", fade(PILLARS[i]))}
+              style={{ left: pct(x, W), top: pct(bottomEnd, H) }}
+            >
+              {content.pillars[i].label}
+            </motion.span>
+          ))}
+        </div>
+
+        <div className="relative ml-3 w-24 shrink-0 sm:ml-4 sm:w-28">
+          <Bracket
+            from={pediment.y}
+            to={topEnd - 8}
+            label={content.whyMe.label}
+            part="whyMe"
+            lit={lights(part, "pediment")}
+            onPoint={setPointed}
+            onPick={pick}
+          />
+          <Bracket
+            from={topEnd + 8}
+            to={bottomEnd}
+            label={content.whyBloomberg.label}
+            part="whyBloomberg"
+            lit={lights(part, "steps")}
+            onPoint={setPointed}
+            onPick={pick}
+          />
+        </div>
       </div>
 
-      {focus && (
-        <DeskFocus
-          item={focus.item}
-          origin={focus.origin}
-          labels={labels}
-          reduceMotion={reduceMotion}
-          onClosed={() => setFocus(null)}
-        />
-      )}
-    </>
+      <div id="why-panel" className="mt-16 scroll-mt-24 lg:sticky lg:top-24 lg:mt-0 lg:max-h-[calc(100svh-8rem)] lg:overflow-y-auto">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={picked}
+            initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
+          >
+            {panels[picked]}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
   );
 }

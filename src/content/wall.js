@@ -15,7 +15,7 @@ export const wall = {
     {
       slug: "eggs-in-one-basket",
       title: "Don't put all your eggs in one basket",
-      story: ["I agree, and I refuse. Passion often takes intensity."],
+      story: ["I agree, however passion often takes intensity."],
     },
     {
       slug: "intuitive-learning",

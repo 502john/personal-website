@@ -5,6 +5,7 @@
 //   slug    names its photo folder, public/wall/<slug>/ (photos show on the back, as on the desk)
 //   title   on the note and the back
 //   story   paragraphs on the back
+//   status  optional small tag under the story, like "Full write up coming soon"
 //   hidden  true to keep it here without showing it
 
 export const wall = {
@@ -23,6 +24,7 @@ export const wall = {
         "Learning is getting the big picture. The details matter far less than the lesson.",
         "A good tutor breaks a problem down so that you specifically understand it, the way a small adapter tunes a big model to one task. AI is the equalizer, because now everyone has that tutor.",
       ],
+      status: "Full write up coming soon",
     },
   ],
 };

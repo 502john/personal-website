@@ -37,7 +37,7 @@ function Note({ note, spot, active, onOpen }) {
       onClick={(e) => onOpen(note, e.currentTarget.getBoundingClientRect())}
       className={cn(
         paper,
-        "absolute flex size-[7.5em] cursor-pointer items-center justify-center p-[0.7em] text-center [background-image:linear-gradient(135deg,transparent_calc(100%-1.2em),color-mix(in_oklch,var(--foreground)_10%,transparent)_calc(100%-1.2em))]",
+        "absolute flex size-[6.5em] cursor-pointer items-center justify-center p-[0.6em] text-center [background-image:linear-gradient(135deg,transparent_calc(100%-1.2em),color-mix(in_oklch,var(--foreground)_10%,transparent)_calc(100%-1.2em))]",
         active ? "pointer-events-auto hover:-translate-y-[0.2em]" : "pointer-events-none",
         "transition-transform duration-200 motion-reduce:transition-none"
       )}
@@ -45,7 +45,7 @@ function Note({ note, spot, active, onOpen }) {
     >
       {/* The pin. */}
       <span aria-hidden="true" className="absolute top-[0.35em] left-1/2 size-[0.5em] -translate-x-1/2 rounded-full border border-foreground/80 bg-foreground/20" />
-      <span className="font-serif text-[0.85em] leading-snug italic">{note.title}</span>
+      <span className="font-serif text-[0.78em] leading-snug italic">{note.title}</span>
     </button>
   );
 }

@@ -31,7 +31,21 @@ function Panel({ part, children }) {
   return (
     <div>
       <h2 className="text-xs tracking-[0.2em] text-muted-foreground uppercase">{part.label}</h2>
-      <p className="mt-3 font-serif text-lg leading-relaxed">{part.line}</p>
+      {[part.line].flat().map((paragraph) => (
+        <p key={paragraph} className="mt-3 font-serif text-lg leading-relaxed">
+          {paragraph}
+        </p>
+      ))}
+      {part.quote && (
+        <div className="mt-8">
+          {part.quote.lead && <p className="text-sm text-muted-foreground">{part.quote.lead}</p>}
+          <figure className="mt-4 border-l-[1.5px] border-foreground/60 pl-4">
+            <blockquote className="font-serif text-lg leading-relaxed italic">“{part.quote.text}”</blockquote>
+            <figcaption className="mt-2 text-sm text-muted-foreground">{part.quote.by}</figcaption>
+          </figure>
+          {part.quote.note && <p className="mt-8 font-serif text-lg leading-relaxed">{part.quote.note}</p>}
+        </div>
+      )}
       {children}
       {part.experience?.length > 0 && (
         <div className="mt-8">
@@ -75,18 +89,7 @@ export default function WhyBloombergPage() {
         <Preparation photos={photos} videos={videos} labels={site.labels} title={page.preparation.label} />
       </Panel>
     ),
-    whyBloomberg: (
-      <Panel part={page.whyBloomberg}>
-        <ul className="mt-6 divide-y divide-dotted">
-          {page.pillars.map((pillar) => (
-            <li key={pillar.label} className="py-4 first:pt-0">
-              <p className="font-serif font-bold">{pillar.label}</p>
-              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{pillar.line}</p>
-            </li>
-          ))}
-        </ul>
-      </Panel>
-    ),
+    whyBloomberg: <Panel part={page.whyBloomberg} />,
     data: <Panel part={data} />,
     impact: <Panel part={impact} />,
     culture: <Panel part={culture} />,

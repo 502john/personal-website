@@ -21,8 +21,9 @@ export const wall = {
       slug: "intuitive-learning",
       title: "Intuitive learning as LoRA adapters",
       story: [
-        "Learning is getting the big picture. The details matter far less than the lesson.",
-        "A good tutor breaks a problem down so that you specifically understand it, the way a small adapter tunes a big model to one task. AI is the equalizer, because now everyone has that tutor.",
+        "Most people aren't missing the ability to learn something, they're missing the translation.",
+        "LoRA doesn't retrain a big model. The knowledge is already in there, so it adds a small layer that connects it to the task.",
+        "A good tutor is that layer. They put the material in your words, your stories, the way you think, and it clicks. AI is the equalizer, because now everyone can have one.",
       ],
       status: "Full write up coming soon",
     },

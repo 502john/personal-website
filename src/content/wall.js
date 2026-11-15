@@ -10,7 +10,7 @@
 
 export const wall = {
   label: "Things I care about",
-  back: "Back to the desk",
+  back: "Back to main view",
   notes: [
     {
       slug: "eggs-in-one-basket",

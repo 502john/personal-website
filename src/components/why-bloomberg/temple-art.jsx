@@ -44,7 +44,6 @@ export const TEMPLE = {
   columnCenters: centers,
   steps,
 };
-TEMPLE.viewBox = `0 0 ${TEMPLE.width} ${TEMPLE.height}`;
 
 function svgViewport({ width, height }) {
   return { xmlns: "http://www.w3.org/2000/svg", viewBox: `0 0 ${width} ${height}`, overflow: "visible" };

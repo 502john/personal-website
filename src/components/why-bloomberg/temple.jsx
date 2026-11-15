@@ -30,7 +30,13 @@ const onHash = (callback) => {
   addEventListener("hashchange", callback);
   return () => removeEventListener("hashchange", callback);
 };
-const readHash = () => decodeURIComponent(location.hash.slice(1));
+const readHash = () => {
+  try {
+    return decodeURIComponent(location.hash.slice(1));
+  } catch {
+    return ""; // a mangled link falls back to the intro
+  }
+};
 
 // Which pieces belong to the part being pointed at. Everything else fades back.
 const PARTS = {
@@ -60,7 +66,8 @@ function Frieze({ media, moving }) {
       )}
       style={{ "--loop": `${tiles.length * 4}s` }}
     >
-      {[0, 1].map((copy) =>
+      {/* The second copy only exists to make the loop seamless, so a still band skips it. */}
+      {(moving ? [0, 1] : [0]).map((copy) =>
         tiles.map((item, i) => (
           <div key={`${copy}-${i}`} className="relative h-full shrink-0" style={{ width: `${(tileWidth / W) * 100}cqw` }}>
             {item && (
@@ -104,10 +111,10 @@ function Bracket({ from, to, label, part, lit, onPoint, onPick }) {
 
 export function Temple({ content, panels, media }) {
   const reduceMotion = useReducedMotion();
-  const [pointed, setPointed] = useState(null);
+  const [part, setPointed] = useState(null); // the part being pointed at, which lights up
   const hash = useSyncExternalStore(onHash, readHash, () => "");
-  const picked = panels[hash] ? hash : "intro";
-  const part = pointed;
+  // Only the page's own parts, so a link like #constructor can't pick something else.
+  const picked = Object.hasOwn(panels, hash) ? hash : "intro";
 
   const pick = (next) => {
     history.replaceState(null, "", `#${next}`);

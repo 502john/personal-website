@@ -76,7 +76,7 @@ export const experience = [
     start: "2026-01",
     end: "2026-06",
     domain: "Healthcare",
-    why: "A model that reasons like a radiologist still needs tests that prove it before any surgeon sees its output.",
+    why: "A research prototype for neurosurgery needs tests that show exactly where it breaks before anyone can build on it.",
     bullets: [
       "Ported a neurosurgical PyQt application to Linux HPC and built an automated QA harness over 100 natural-language prompt suites, capturing UI screenshots and telemetry to isolate failures, driving fixes that raised pass rates from 20% to 100%.",
       "Designed a LangChain workflow that breaks one-shot tumor diagnosis into a 5-step radiologist-style reasoning chain (e.g., symmetry, lesion location), each a dedicated model call on BraTS MRI data, delivering a prototype to inform the lab's system design.",

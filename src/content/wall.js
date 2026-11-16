@@ -22,7 +22,7 @@ export const wall = {
       title: "Intuitive learning as LoRA adapters",
       story: [
         "Most people aren't missing the ability to learn something, they're missing the translation.",
-        "LoRA doesn't retrain a big model. The knowledge is already in there, so it adds a small layer that connects it to the task.",
+        "LoRA doesn't retrain a big model. The ability is already in there, so it adds a small layer that connects it to the task.",
         "A good tutor is that layer. They put the material in your words, your stories, the way you think, and it clicks. AI is the equalizer, because now everyone can have one.",
       ],
       status: "Full write up coming soon",

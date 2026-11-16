@@ -28,7 +28,7 @@ export const whyBloomberg = {
 
   whyMe: {
     label: "Why me to Bloomberg",
-    line: "I turn research into something people can rely on. Clear requirements, deliberate trade-offs, and work clean enough that every answer holds up.",
+    line: "I take an idea from the first experiment to something other people can rely on.",
     experience: ["lijing-wang-lab", "ai-imaging-medicine-lab"],
   },
 

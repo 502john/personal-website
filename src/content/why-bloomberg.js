@@ -65,7 +65,7 @@ export const whyBloomberg = {
       label: "Culture",
       line: [
         "Bloomberg's culture is flat, and engineers talk directly with the people leading the work. I know what that does for someone new. At PGIM, being able to sit down with engineers and leadership is a big part of why I grew as fast as I did.",
-        "Everyone I've spoken with at Bloomberg also gives back in some way, through mentoring, events like Code To Career, or their own communities. That's what I've tried to do through SHPE and HISPA, and it's the kind of place I want to keep growing in.",
+        "Everyone I've spoken with at Bloomberg also gives back in some way, through mentoring, events like Code To Career, or their own communities. That's what I've done through SHPE and HISPA, and it's the kind of place I want to keep growing in.",
       ],
       desk: ["shpe", "community"],
     },

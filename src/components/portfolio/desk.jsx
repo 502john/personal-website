@@ -131,9 +131,10 @@ export function Desk({ items, labels, wall }) {
   // Untouched objects keep their order; touched ones go on top, most recent highest.
   const order = [...items.keys()].filter((i) => !stack.includes(i)).concat(stack);
   // Each object rests on the thickness of everything below it, so a thick one never pokes
-  // through a neighbor (thickness is in em, up to 16px each).
+  // through a neighbor. In em, like the rest of the scene, so the stack keeps its height when a
+  // small screen shrinks the desk (in px it would tower over a phone's desk, seen from the wall).
   const depth = (i) =>
-    order.slice(0, order.indexOf(i)).reduce((z, j) => z + 2 + (THICKNESS[items[j].kind] ?? 0) * 16, 2);
+    order.slice(0, order.indexOf(i)).reduce((z, j) => z + 0.125 + (THICKNESS[items[j].kind] ?? 0), 0.125);
 
   // Drag anywhere that isn't an object (desk, floor, wall) to look around.
   const orbitHandlers = {
@@ -203,7 +204,7 @@ export function Desk({ items, labels, wall }) {
                 className="absolute top-[var(--t0)] left-[var(--l0)] -translate-x-1/2 -translate-y-1/2 [transform-style:preserve-3d] sm:top-[var(--t1)] sm:left-[var(--l1)] lg:top-[var(--t2)] lg:left-[var(--l2)]"
                 // In 3D, depth (not z-index) decides what's on top. Every object gets its own
                 // depth above the desk; objects at the same depth flicker against each other.
-                style={{ ...spots, transform: `translateZ(${depth(i)}px)` }}
+                style={{ ...spots, transform: `translateZ(${depth(i)}em)` }}
               >
                 <DeskItem
                   item={item}

@@ -205,6 +205,15 @@ export function Temple({ content, panels }) {
             onPick={pick}
           />
           <Bracket
+            from={roofEnd + 8}
+            to={beamEnd}
+            label={content.preparation.label}
+            part="preparation"
+            lit={lights(part, "frieze")}
+            onPoint={setPointed}
+            onPick={pick}
+          />
+          <Bracket
             from={beamEnd + 8}
             to={bottomEnd}
             label={content.whyBloomberg.label}

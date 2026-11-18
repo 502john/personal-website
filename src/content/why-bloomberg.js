@@ -25,6 +25,8 @@ export const whyBloomberg = {
     "Two questions, built like a temple.",
     "Why Bloomberg is the foundation, the three reasons it's where I want to grow. Why me rests on top, what I'd bring and how I got ready.",
   ],
+  // Set apart under the intro, pointing to the video.
+  ps: "P.S. Check out my day-by-day updates leading up to my interview by clicking Road to Bloomberg.",
 
   whyMe: {
     label: "Why me to Bloomberg",

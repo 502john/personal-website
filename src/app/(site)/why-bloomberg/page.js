@@ -81,6 +81,7 @@ export default function WhyBloombergPage() {
         {page.intro.map((p) => (
           <p key={p}>{p}</p>
         ))}
+        <p className="pt-6">{page.ps}</p>
       </div>
     ),
     whyMe: <Panel part={page.whyMe} />,

@@ -81,6 +81,7 @@ export default function WhyBloombergPage() {
         {page.intro.map((p) => (
           <p key={p}>{p}</p>
         ))}
+        <p className="pt-6">{page.ps}</p>
       </div>
     ),
     whyMe: <Panel part={page.whyMe} />,
@@ -101,7 +102,7 @@ export default function WhyBloombergPage() {
         <h1 className="font-serif text-3xl font-bold sm:text-5xl">{page.title}</h1>
         <p className="mt-3 text-sm text-muted-foreground">{page.hint}</p>
       </header>
-      <Temple content={page} panels={panels} media={[...photos, ...videos.map((v) => ({ ...v, video: true }))]} />
+      <Temple content={page} panels={panels} />
     </Container>
   );
 }

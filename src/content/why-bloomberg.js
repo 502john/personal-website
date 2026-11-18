@@ -16,7 +16,7 @@
 //                and what it means after it
 //
 // Road to Bloomberg photos and videos go in public/why-bloomberg/, sorted and captioned by file name
-// as on the desk. They show through the band under the roof.
+// as on the desk. They show in its panel.
 
 export const whyBloomberg = {
   title: "Why Bloomberg?",
@@ -25,16 +25,18 @@ export const whyBloomberg = {
     "Two questions, built like a temple.",
     "Why Bloomberg is the foundation, the three reasons it's where I want to grow. Why me rests on top, what I'd bring and how I got ready.",
   ],
+  // Set apart under the intro, pointing to the video.
+  ps: "P.S. Check out my day-by-day updates leading up to my interview by clicking Road to Bloomberg.",
 
   whyMe: {
     label: "Why me to Bloomberg",
-    line: "I take an idea from the first experiment to something other people can rely on.",
+    line: "Research taught me to work on a team, debug down to the root cause, and turn an ambiguous ask into clear requirements. That's how I take an idea from the first experiment to something other people can rely on.",
     experience: ["lijing-wang-lab", "ai-imaging-medicine-lab"],
   },
 
   preparation: {
     label: "Road to Bloomberg",
-    line: "The events, the conversations, and the late nights studying for this interview.",
+    line: "A short video of how I got ready for this interview.",
   },
 
   whyBloomberg: {

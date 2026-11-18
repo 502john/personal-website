@@ -57,9 +57,9 @@ export const experience = [
     role: "Undergraduate Research Assistant",
     start: "2026-01",
     end: "2026-06",
-    why: "Turning a professor's hypothesis into code means building experiments clean enough that every answer holds up.",
+    why: "Testing a research hypothesis means building experiments clean enough that every answer holds up.",
     bullets: [
-      "Turned a professor's research hypothesis on gradient cancellation into a modular Python framework for rapid iteration, executing 250+ controlled fine-tuning runs across 4 language and vision models on an A100 GPU cluster (6,000+ GPU service units).",
+      "Built a modular Python framework to test a gradient cancellation hypothesis, executing 250+ controlled fine-tuning runs across 4 language and vision models on an A100 GPU cluster (6,000+ GPU service units).",
       "Audited Hugging Face and PyTorch internals to remove hidden global seed state, building custom seed modules and checkpoints so each source of randomness could be tested in isolation, preventing invalidation of 400+ planned runs.",
       "Built Python and Jupyter analysis scripts that turn raw fine-tuning output into structured results reports and visualizations, enabling faster faculty review of experiment outcomes.",
     ],

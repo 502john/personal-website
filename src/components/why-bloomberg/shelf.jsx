@@ -52,23 +52,29 @@ export function DeskShelf({ items, labels }) {
   );
 }
 
-// The preparation photos as a stack to flip through, then any videos.
+// The preparation photos as a stack to flip through, then any videos. A video is sized to fit the
+// screen's height under the page title and the panel's heading and line, so the whole frame shows
+// without scrolling.
 export function Preparation({ photos, videos, labels, title }) {
   const reduceMotion = useReducedMotion();
   return (
     <>
       {photos.length > 0 && <PhotoStack photos={photos} title={title} labels={labels} reduceMotion={reduceMotion} />}
-      {videos.map((video) => (
-        <video
-          key={video.src}
-          src={`${video.src}#t=0.1`}
-          aria-label={video.alt || title}
-          controls
-          playsInline
-          preload="metadata"
-          className="mt-5 block w-full rounded-md border border-dotted bg-black"
-        />
-      ))}
+      {videos.map((video) => {
+        const shape = video.width && video.height ? video.width / video.height : 9 / 16;
+        return (
+          <video
+            key={video.src}
+            src={`${video.src}#t=0.1`}
+            aria-label={video.alt || title}
+            controls
+            playsInline
+            preload="metadata"
+            className="mx-auto mt-5 block rounded-md border border-dotted bg-black"
+            style={{ aspectRatio: shape, width: `min(100%, calc((100svh - 20rem) * ${shape}))` }}
+          />
+        );
+      })}
     </>
   );
 }

@@ -5,7 +5,7 @@
 //   gaps between columns 2 1/4 D ("eustyle", the spacing Vitruvius called the most beautiful)
 //   beam (architrave, frieze, cornice) about a quarter of the column's height
 //   roof height about a ninth of its width
-// The frieze keeps a band of grooves and square openings, which hold the preparation photos.
+// The frieze keeps a band of grooves and square openings, still and empty.
 //
 // Every piece is its own <svg> placed with the TEMPLE layout, so the page can position,
 // animate, and attach handlers to each. Strokes use the text color and fills use the page

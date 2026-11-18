@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState, useSyncExternalStore } from "react";
 import { cn } from "@/lib/utils";
@@ -46,43 +45,18 @@ const PARTS = {
 };
 const lights = (part, piece) => !part || part === piece || PARTS[part]?.includes(piece);
 
-// The band under the roof: grooves and square openings, with the preparation photos and videos
-// showing through. It drifts slowly sideways (two copies of the tiles make a seamless loop).
-function Frieze({ media, moving }) {
-  const { height } = TEMPLE.frieze;
+// The band under the roof, grooves and square openings, still.
+function Frieze() {
   // A whole number of tiles fills the band exactly, so no cut-off groove shows at its edge.
   const fit = Math.round(TEMPLE.frieze.width / TEMPLE.frieze.tileWidth);
-  const tileWidth = TEMPLE.frieze.width / fit;
-  const tiles = Array.from({ length: Math.max(fit, media.length) }, (_, i) => media[i % media.length]);
-  const m = TEMPLE.metope;
-  const art = TEMPLE.frieze.tileWidth; // the drawing's tile width, which stretches to fit
-  const opening = { left: pct(m.x, art), top: pct(m.y, height), width: pct(m.width, art), height: pct(m.height, height) };
 
   return (
-    <div
-      className={cn(
-        "flex h-full w-max",
-        moving && "animate-[frieze_var(--loop)_linear_infinite] group-hover:[animation-play-state:paused] group-focus-visible:[animation-play-state:paused]"
-      )}
-      style={{ "--loop": `${tiles.length * 4}s` }}
-    >
-      {/* The second copy only exists to make the loop seamless, so a still band skips it. */}
-      {(moving ? [0, 1] : [0]).map((copy) =>
-        tiles.map((item, i) => (
-          <div key={`${copy}-${i}`} className="relative h-full shrink-0" style={{ width: `${(tileWidth / W) * 100}cqw` }}>
-            {item && (
-              <span className="absolute overflow-hidden" style={opening}>
-                {item.video ? (
-                  <video src={`${item.src}#t=0.1`} muted playsInline preload="metadata" className="size-full object-cover" />
-                ) : (
-                  <Image src={item.src} alt="" fill sizes="6rem" draggable={false} className="object-cover" />
-                )}
-              </span>
-            )}
-            <FriezeTile preserveAspectRatio="none" className={cn(drawn, "inset-0 size-full")} style={delay(DRAW.frieze)} />
-          </div>
-        ))
-      )}
+    <div className="flex h-full">
+      {Array.from({ length: fit }, (_, i) => (
+        <div key={i} className="relative h-full flex-1">
+          <FriezeTile preserveAspectRatio="none" className={cn(drawn, "inset-0 size-full")} style={delay(DRAW.frieze)} />
+        </div>
+      ))}
     </div>
   );
 }
@@ -109,18 +83,26 @@ function Bracket({ from, to, label, part, lit, onPoint, onPick }) {
   );
 }
 
-export function Temple({ content, panels, media }) {
+export function Temple({ content, panels }) {
   const reduceMotion = useReducedMotion();
   const [part, setPointed] = useState(null); // the part being pointed at, which lights up
   const hash = useSyncExternalStore(onHash, readHash, () => "");
   // Only the page's own parts, so a link like #constructor can't pick something else.
   const picked = Object.hasOwn(panels, hash) ? hash : "intro";
 
+  // On narrow screens the panel is below the temple, so a pick brings it into view. That waits
+  // until the new panel is in place, since a short panel leaving can leave too little page to scroll.
+  // The panel carries a data-scroll mark from the pick until then.
   const pick = (next) => {
+    document.getElementById("why-panel")?.toggleAttribute("data-scroll", innerWidth < 1024);
     history.replaceState(null, "", `#${next}`);
     dispatchEvent(new HashChangeEvent("hashchange"));
-    // On narrow screens the panel is below the temple, so bring it into view.
-    if (innerWidth < 1024) document.getElementById("why-panel")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+  };
+  const panelPlaced = (node) => {
+    const panel = node?.closest("#why-panel");
+    if (!panel?.hasAttribute("data-scroll")) return;
+    panel.removeAttribute("data-scroll");
+    panel.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
   };
 
   // Props for a piece of the temple that can be pointed at and picked.
@@ -167,7 +149,7 @@ export function Temple({ content, panels, media }) {
           ))}
 
           <Architrave className={cn(drawn, fade("architrave"))} style={{ ...place(architrave), ...delay(DRAW.architrave) }} />
-          {/* The beam names the band of photos above it. */}
+          {/* The beam names the band above it, which opens the Road to Bloomberg. */}
           <motion.p
             {...fadeIn}
             aria-hidden="true"
@@ -181,10 +163,10 @@ export function Temple({ content, panels, media }) {
           <button
             {...handles("preparation")}
             aria-label={content.preparation.label}
-            className={cn("group absolute cursor-pointer overflow-hidden border-x-[1.5px] border-current", fade("frieze"))}
+            className={cn("absolute cursor-pointer overflow-hidden border-x-[1.5px] border-current", fade("frieze"))}
             style={place(frieze)}
           >
-            <Frieze media={media} moving={media.length > 0 && !reduceMotion} />
+            <Frieze />
           </button>
 
           <Cornice className={cn(drawn, fade("cornice"))} style={{ ...place(cornice), ...delay(DRAW.cornice) }} />
@@ -238,6 +220,7 @@ export function Temple({ content, panels, media }) {
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={picked}
+            ref={panelPlaced}
             initial={reduceMotion ? false : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}

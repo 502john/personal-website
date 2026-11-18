@@ -16,7 +16,7 @@
 //                and what it means after it
 //
 // Road to Bloomberg photos and videos go in public/why-bloomberg/, sorted and captioned by file name
-// as on the desk. They show through the band under the roof.
+// as on the desk. They show in its panel.
 
 export const whyBloomberg = {
   title: "Why Bloomberg?",
@@ -34,7 +34,7 @@ export const whyBloomberg = {
 
   preparation: {
     label: "Road to Bloomberg",
-    line: "The events, the conversations, and the late nights studying for this interview.",
+    line: "A short video of how I got ready for this interview.",
   },
 
   whyBloomberg: {

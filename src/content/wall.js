@@ -13,11 +13,6 @@ export const wall = {
   back: "Back to main view",
   notes: [
     {
-      slug: "eggs-in-one-basket",
-      title: "Don't put all your eggs in one basket",
-      story: ["I agree, however passion often takes intensity."],
-    },
-    {
       slug: "intuitive-learning",
       title: "Intuitive learning as LoRA adapters",
       story: [
@@ -26,6 +21,10 @@ export const wall = {
         "A good tutor is that layer. They put the material in your words, your stories, the way you think, and it clicks. AI is the equalizer, because now everyone can have one.",
       ],
       status: "Full write up coming soon",
+    },
+    {
+      slug: "no-for-now",
+      title: "No means no for right now, not no forever",
     },
   ],
 };

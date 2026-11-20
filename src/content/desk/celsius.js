@@ -50,7 +50,7 @@ const flavors = [
 const tiers = {
   S: ["Cherry Cola", "Kiwi Strawberry"],
   A: [],
-  B: ["Grape Rush", "Arctic Vibe", "Cosmic Vibe", "Fizz Free Peach Mango Green Tea", "Watermelon Lemonade"],
+  B: ["Grape Rush", "Arctic Vibe", "Cosmic Vibe", "Fizz Free Peach Mango Green Tea", "Watermelon Lemonade", "Wild Berry"],
   C: ["Mango Lemonade", "Fuji Apple Pear"],
   D: [],
 };
